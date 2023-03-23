@@ -1,0 +1,6 @@
+To get this to work on different devices you must change p2p.py AND p2p1.py, you need to change l_ip to the local ip address of the device, tcp_s_adr to the local address as well and then change rsp_d_ip to ip address you want to connect to.
+
+You then need to change the stored ip addresses in token.txt files for both peers. FOR peer 1 you need to change LINE 2 of the token.txt file by swapping out the ip address for the "correct" one. For peer 2 you need to swapping out LINE 1 ip address.dont touch anything else in the token file else it will break.
+
+
+Hopefully it should work,
