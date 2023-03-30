@@ -158,7 +158,7 @@ def listen():\
                 #print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
             
         #numbers in this range are receved tcp port numbers
-        elif (int(data) >= 50000 and int(data) <=60000):
+        elif (int(data) >= 32000 and int(data) <=60000):
             #update the peer port 
             global p_port
             p_port = int(data)
