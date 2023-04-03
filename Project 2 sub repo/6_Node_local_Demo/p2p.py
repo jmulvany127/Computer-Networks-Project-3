@@ -43,7 +43,8 @@ rsp_d_ip = '127.0.0.1' #ip address of most recent peer, will be edited by functi
 
 rcved = False #boolean to indicate whether or not peer TCP Connection recievd
 
-p_addr = Queue() #global variable base address for new peers will be edited by functions
+d_ip = Queue() #queue which holds new peers ips
+p_port = Queue() #queue which holds new peer addresses 
 bfr = Queue() #buffer for listening server data 
              
 #function opened in new thread
@@ -174,14 +175,13 @@ def listen():
             #numbers in this range are receved tcp port numbers
             elif (int(data) >= 50000 and int(data) <=60000):
                 #update the peer port 
+                global p_port
+                p_port.enqueue(int(data))
                 
-                rcvd_addr = (str(d_ip), int(data))
+                #print(f"new peer address received {debug_adr}") #debug
                 
-                global p_addr
-                p_addr.enqueue(rcvd_addr)
-                print(f"new peer address received {p_addr}") #debug
+                
                 global rcved
-                
                 #upate the received variable
                 rcved = True 
                 
@@ -198,17 +198,18 @@ def send_message( udp_d_port):
             
             udp_s_port = (udp_s_port + 1)
             #print(udp_d_port)
-            #print(d_ip)
             
-            d_adr = (str(d_ip),udp_d_port)
+            d_ip1 = d_ip.dequeue()
+            #print(d_ip1)
+            d_adr = (str(d_ip1),udp_d_port)
             #print(d_adr)
             
-            #include d_ips //////////////////////////////////////////////////////////////////
+            
             send_sock.sendto(str(my_token).encode(), d_adr)
             
             time.sleep(0.1)
             marker = 't'
-            send_sock.sendto(marker.encode(), (str(d_ip), udp_d_port))
+            send_sock.sendto(marker.encode(), (str(d_ip1), udp_d_port))
             send_sock.close()
             
            
@@ -218,11 +219,11 @@ def send_message( udp_d_port):
             time.sleep(0.2)
             #waits for peer to send back the tcp port number, received will be true here
             print(f"waiting for the peer socket address")
-            while (p_addr.size() >0):
+            while (p_port.size() >0):
                 if (rcved == True):
                     #open tcp client and send message to peer tcp peer 
                     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                    p_tcp_addr = p_addr.dequeue()
+                    p_tcp_addr = (str(d_ip1),p_port.dequeue())
                     print(p_tcp_addr)
                     
                     s.connect((p_tcp_addr))
@@ -297,7 +298,7 @@ def peer_to_ip_and_port(number):
     global port
     storage = addres_arrays(correctnums)
     d_ip_array = ip_array(storage)
-    d_ip = d_ip_array[0]
+    d_ip.enqueue(d_ip_array[0])
     port = port_array(storage)
     return True 
     #shouldnt need to anything else as ip+port should be in the global array but declared in there respective functions idk at this point

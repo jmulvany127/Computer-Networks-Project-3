@@ -168,8 +168,9 @@ def listen():\
             p_port = int(data)
             
             global p_addr
-            p_addr = (str(d_ip), p_port)
-            # print(f"new peer address received {p_addr}") #debug
+            p_addr = (str(d_ip[(d_ip.size()-1)]), p_port)
+            debug_adr = p_addr.dequeue()
+            print(f"new peer address received {debug_adr}") #debug
             global rcved
             
             #upate the received variable
