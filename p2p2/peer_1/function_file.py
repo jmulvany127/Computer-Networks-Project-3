@@ -1,8 +1,6 @@
-##function file add database , add p2p a1 listen return false to all files
-## function that requests a database update,get tokens
 import os.path
 
-
+#function that inserts into database
 def database_insert(filepath):
     #if token doesnt exist write here rn
         if os.path.isfile(filepath) != True:
@@ -38,6 +36,42 @@ def database_insert(filepath):
                 return
             
 
+#create token.txt, if token.txt already exists, it will open token.txt, if the token is already in the file it will do nothing,if the token is not in the file it will add it, it requires ip address,port,token, addr[0] was were the ip address was stored,you may need to fix this function before it works
+def token_insert(ip,port,token):
+    #if token doesnt exist write here rn
+        if os.path.isfile("token.txt") != True:
+            with open("token.txt","w") as f:
+                print(ip,",", port,",",token,file=f)
+                f.close
+                return
+    #else if it does exist read token values and compare against ones in db,if it doesnt exist add it.
+        else:
+            f=open("token.txt","r")
+            lines= f.readlines()
+            count = 0
+            for line in lines:
+                count +=1
+            f.close
+            with open ('token.txt',"r+") as f:
+            #content =f.readline()
+            #print(content)
+                for x in range(count):
+                    content=f.readline()
+                    contentsplit = content.split(",")
+                    tkn = int(contentsplit[2])
+                    if int(token) == tkn :
+                        print("Token is in database")
+                        f.close
+                        return
+            with open("token.txt","r+") as f:
+                for x in range(count):
+                    print(lines[x].strip(),file=f)
+                print(ip,",", port,",",token,file=f)
+                f.close
+                print("token.txt was written to")
+                #print(token)
+                return
+
 
 ##find peer location on list,read token find line that machine token is on, return line value
 def find_p_number_on_token(my_token):
@@ -60,6 +94,9 @@ def find_p_number_on_token(my_token):
                     print("Token is in database")
                     f.close
                     return i
+
+
+
 
 
 
@@ -190,15 +227,3 @@ def splitting(numbers):
     numbercorrected = [x - 1 for x in number]
     return numbercorrected
 
-
-
-
-"""
-#function 1 example
-def main():
-    print("enter peer number which you want to connect to")
-    numbers = input("")
-    peer_to_ip_and_port(numbers)
-    print(portfull,ipfull)
-main()
-"""
