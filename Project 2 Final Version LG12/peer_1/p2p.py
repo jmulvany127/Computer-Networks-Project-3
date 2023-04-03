@@ -17,7 +17,8 @@ upper = 99999999999999
 lower = 100000
 #file location and size
 filepath = "DATABASE.txt"
-
+filepath2 = "DATABASE2.txt"
+filepath3 = "newDATABASE.txt"
 
 my_p_num = '1'     #peer number of this device
 current_p_num = 0  #peer number of peer in current connection 
@@ -64,7 +65,7 @@ def msg_server():
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
-
+#change filepath here to filepath1?
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
 def file_server():
@@ -90,6 +91,7 @@ def file_server():
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
+
 
 #function opened in new thread
 #function sets up an always on udp server socket for receiving messages from peers  

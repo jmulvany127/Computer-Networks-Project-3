@@ -7,6 +7,4 @@ Ronan , dark hair wears glasses brown eyes, 1/3, missing
 Jake , fair hair blue eyes , 17/2 , missing
 Anna , brown hair , brown eyes , 3/25 , missing
 Jack , blonde hair , blue eyes , 4/1 , missing
-Steve , small,tall , 11/2/20 , missing
-haffi , hotty , lg12 , dead
-Colm , dark hair blue eyes, 27/2 , missing
+Kane , red hair wears glasses blue eyes, 15/2 , missing

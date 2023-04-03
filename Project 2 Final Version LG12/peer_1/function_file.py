@@ -35,6 +35,46 @@ def database_insert(filepath):
                 #print(token)
                 return
             
+#reads in file and puts it into contents
+def database_read(filepath):
+    # Check if file exists
+    if not os.path.isfile(filepath):
+        print("Error: file does not exist")
+        return []
+
+    # Open file and read contents
+    with open(filepath, "r") as f:
+        contents = f.readlines()
+
+    # Remove newline characters from end of each line
+    contents = [line.strip() for line in contents]
+
+    # Return contents as list
+    return contents          
+#merges arrays from second element used to print in file_comparer
+def merge_arrays_without_duplicates(array1, array2):
+    # Combine arrays starting from the second element
+    array3 = array1[2:] + array2[2:]
+
+    # Remove duplicates and add the first element from each array
+    array3 = [array1[0]] +[array1[1]] + list(set(array3))
+
+    return array3
+
+def write_array_to_file(filepath, array):
+    with open(filepath, 'w') as f:
+        for item in array:
+            f.write("%s\n" % item)
+
+#combines .txt files together
+#filepath and filepath 2 are inputs , filepath3 is the output file, filepath3 could theoretically be filepath,
+def file_comparer(filepath,filepath2,filepath3):
+    content = database_read(filepath) 
+    content2 = database_read(filepath2)
+    merged_array= merge_arrays_without_duplicates(content,content2)
+    write_array_to_file(filepath3,merged_array)
+
+
 
 #create token.txt, if token.txt already exists, it will open token.txt, if the token is already in the file it will do nothing,if the token is not in the file it will add it, it requires ip address,port,token, addr[0] was were the ip address was stored,you may need to fix this function before it works
 def token_insert(ip,port,token):
