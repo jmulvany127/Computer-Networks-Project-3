@@ -2,7 +2,10 @@ import socket
 import threading
 import os.path
 import time
+###READ ME- DEAL WITH D_IP WITH SOME FORM OF QUEUE
+###COMMMENT and tidy up code (p_port and p- adres)
 
+from q import*
 from function_file import *
 
 BUFFER_SIZE = 65536
@@ -16,7 +19,7 @@ port = []
 upper = 99999999999999
 lower = 100000
 #file location and size
-filepath = "C:\\Users\\jsmul\\Desktop\\College Year 3\\Semester 2\\3D3 Computer Networks\\Project 2\\project 2 repo\\Final v3\\6 p2p local demo\\DATABASE2.txt"
+filepath = "C:\\Users\\jsmul\\Desktop\\College Year 3\\Semester 2\\3D3 Computer Networks\\Project 2\\project 2 repo\\Final v3\\6 p2p local demo\\DATABASE1.txt"
 filesize = os.path.getsize(filepath)
 
 
@@ -31,20 +34,18 @@ connections = 0
 l_ip = '127.0.0.1'   #local ip- insert device ip here 
 
 udp_l_port = (50000 + int(my_p_num))     #listening port
-udp_s_port = (50100 +  int(my_p_num))     #source port for sender
+udp_s_port = (50100 +  int(my_p_num)*10)     #source port for sender
 
 tcp_s_port = (50000 + 10*int(my_p_num) )  #tcp local server address
-tcp_s_adr = ('127.0.0.1', tcp_s_port) #tcp local server address
+tcp_s_adr = (l_ip, tcp_s_port) #tcp local server address
 
 rsp_d_ip = '127.0.0.1' #ip address of most recent peer, will be edited by functions 
-p_port = 50000 #base port for new peers, will be edited by functions
-p_addr = (rsp_d_ip, p_port) #global variable base address for new peers will be edited by functions
-
-
-
 
 rcved = False #boolean to indicate whether or not peer TCP Connection recievd
 
+d_ip = Queue() #queue which holds new peers ips
+p_port = Queue() #queue which holds new peer addresses 
+bfr = Queue() #buffer for listening server data 
              
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
@@ -63,7 +64,7 @@ def msg_server():
     recieved = recieved.decode('utf-8')
     print((recieved))
 
-    msg_server.close()
+    #msg_server.close()
     
     #decrements the connections when socket closed
     global connections 
@@ -79,7 +80,7 @@ def file_server():
     
     print(f"[*] Listening as file server {tcp_s_adr}")
     client_socket, address = file_server.accept()
-    print(f"[+] peer {current_p_num} is connected.")    
+    print(f"[+] peer {current_p_num} is connected.")
 
     #while loop reads in bytes, saves bytes and then overwrites local file with these bytes 
     while True:
@@ -99,7 +100,9 @@ def file_server():
 
 #function opened in new thread
 #function sets up an always on udp server socket for receiving messages from peers  
-def listen():\
+def listen():
+    
+    global bfr
     
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((l_ip, udp_l_port))
@@ -108,116 +111,124 @@ def listen():\
     
     while True:
         #blocking call reads in and decodes data 
-        data = sock.recv(1024).decode('utf-8')
-        #print (f"received data {data}") #debug
-        
+        rcvd_data = sock.recv(1024).decode('utf-8')
+        print (f"received data {rcvd_data}") #debug
+        bfr.enqueue(rcvd_data)
         #if data is in right range to be a token
-        if ((int(data) >= lower and int(data) <= upper) ):
-            result = ip_fetcher(data)
-            #print(f'peer:{result[0]} {result[1]} connected\n')
-    
-            if (result == False):
-                print("Enter peer number:")
-                return
-            else:
+        while(bfr.size()>0):
+            data = bfr.dequeue()
+            print (f"buffered data {data}")
+            if ((int(data) >= lower and int(data) <= upper) ):
+                result = ip_fetcher(data)
                 #print(f'peer:{result[0]} {result[1]} connected\n')
+        
+                if (result == False):
+                    print("Enter peer number:")
+                    return
+                else:
+                    #print(f'peer:{result[0]} {result[1]} connected\n')
+                    
+                    #marker for file or text data
+                    marker = sock.recv(1024).decode('utf-8')
+                    #increments connection count
+                    global connections 
+                    connections = connections + 1
+                    
+                    #update tcp_s port and address, this is where our local tcp server socket will be binded to 
+                    global tcp_s_port
+                    tcp_s_port = tcp_s_port + connections
+                    global tcp_s_adr
+                    tcp_s_adr = (l_ip, tcp_s_port)
+                    
+                    #update the port number of the peers udp listening port 
+                    
+                    rsp_d_port = int(result[1])
+                    
+                    global rsp_d_ip
+                    rsp_d_ip = (result[0])
+                    rspd_adrs = (rsp_d_ip, rsp_d_port )
+                    
+                    global current_p_num        
+                    current_p_num = result[2]
+                    
+                    #open TCP Server thread
+                    if (marker == 'f'):
+                        f_server = threading.Thread(target=file_server, daemon=True)
+                        f_server.start()
+                    elif (marker == 't'):
+                        m_server = threading.Thread(target=msg_server, daemon=True)
+                        m_server.start()
+                    
+                    #send our local tcp server port to the peer
+                    send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    send_sock.bind((l_ip, udp_s_port))
+                    send_sock.sendto((str(tcp_s_port)).encode(), (rspd_adrs))
+                    send_sock.close()
+                    #print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
                 
-                #marker for file or text data
-                marker = sock.recv(1024).decode('utf-8')
-                #increments connection count
-                global connections 
-                connections = connections + 1
+            #numbers in this range are receved tcp port numbers
+            elif (int(data) >= 50000 and int(data) <=60000):
+                #update the peer port 
+                global p_port
+                p_port.enqueue(int(data))
                 
-                #update tcp_s port and address, this is where our local tcp server socket will be binded to 
-                global tcp_s_port
-                tcp_s_port = tcp_s_port + connections
-                global tcp_s_adr
-                tcp_s_adr = (l_ip, tcp_s_port)
-                
-                #update the port number of the peers udp listening port 
-                
-                rsp_d_port = int(result[1])
-                
-                global rsp_d_ip
-                rsp_d_ip = (result[0])
-                rspd_adrs = (rsp_d_ip, rsp_d_port )
-                
-                global current_p_num        
-                current_p_num = result[2]
-                
-                #open TCP Server thread
-                if (marker == 'f'):
-                    f_server = threading.Thread(target=file_server, daemon=True)
-                    f_server.start()
-                elif (marker == 't'):
-                    m_server = threading.Thread(target=msg_server, daemon=True)
-                    m_server.start()
+                #print(f"new peer address received {debug_adr}") #debug
                 
                 
-                #send our local tcp server port to the peer
-                send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                send_sock.bind((l_ip, udp_s_port))
-                send_sock.sendto((str(tcp_s_port)).encode(), (rspd_adrs))
-                send_sock.close()
-                #print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
-            
-        #numbers in this range are receved tcp port numbers
-        elif (int(data) >= 50000 and int(data) <=60000):
-            #update the peer port 
-            global p_port
-            p_port = int(data)
-            
-            global p_addr
-            p_addr = (str(d_ip[(d_ip.size()-1)]), p_port)
-            debug_adr = p_addr.dequeue()
-            print(f"new peer address received {debug_adr}") #debug
-            global rcved
-            
-            #upate the received variable
-            rcved = True 
-            
-        else:
-            print ("data unrecognised, connection blocked\n")
+                global rcved
+                #upate the received variable
+                rcved = True 
+                
+            else:
+                print ("data unrecognised, connection blocked\n")
+        
 
 #function to send typed messages to peer
 def send_message( udp_d_port):
+            global udp_s_port
             #opens the udp sending socket 
             send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             send_sock.bind((l_ip, udp_s_port))
             
+            udp_s_port = (udp_s_port + 1)
             #print(udp_d_port)
-            #print(d_ip)
             
-            d_adr = (str(d_ip),udp_d_port)
+            d_ip1 = d_ip.dequeue()
+            #print(d_ip1)
+            d_adr = (str(d_ip1),udp_d_port)
             #print(d_adr)
             
-            #include d_ips //////////////////////////////////////////////////////////////////
+            
             send_sock.sendto(str(my_token).encode(), d_adr)
             
             time.sleep(0.1)
             marker = 't'
-            send_sock.sendto(marker.encode(), (str(d_ip), udp_d_port))
+            send_sock.sendto(marker.encode(), (str(d_ip1), udp_d_port))
             send_sock.close()
             
            
-            global p_port 
+            
             global rcved
             
             time.sleep(0.2)
             #waits for peer to send back the tcp port number, received will be true here
             print(f"waiting for the peer socket address")
-            while True:
+            while (p_port.size() >0):
                 if (rcved == True):
                     #open tcp client and send message to peer tcp peer 
                     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                    #print(p_addr)
+                    p_tcp_addr = (str(d_ip1),p_port.dequeue())
+                    print(p_tcp_addr)
                     
-                    s.connect((p_addr))
-                    msg = input('Input peer message: \n ').encode('utf-8')
-                    s.send(msg)
+                    s.connect((p_tcp_addr))
+                    while True:
+                        msg = input('Input peer message: \n ').encode('utf-8')
+                        s.send(msg)
+
                     s.close()
-                    rcved = False
-                    p_port = 50000
+                   
+                   
+                    
                     break 
         
 #function to send files to peer        
@@ -284,7 +295,7 @@ def peer_to_ip_and_port(number):
     global port
     storage = addres_arrays(correctnums)
     d_ip_array = ip_array(storage)
-    d_ip = d_ip_array[0]
+    d_ip.enqueue(d_ip_array[0])
     port = port_array(storage)
     return True 
     #shouldnt need to anything else as ip+port should be in the global array but declared in there respective functions idk at this point
@@ -310,6 +321,20 @@ def main():
             print_Dbase()
         elif(cmd == "add"):
             database_insert(filepath)
+        elif (cmd == 'all'):
+            
+            check = peer_to_ip_and_port('1')
+            udp_d_port = int(port[0])
+            msgr = threading.Thread(target=send_message, daemon=True, args=[ udp_d_port])
+            msgr.start()
+            
+            check = peer_to_ip_and_port('3')
+            udp_d_port = int(port[0])
+            msgr = threading.Thread(target=send_message, daemon=True, args=[ udp_d_port])
+            msgr.start()
+           
+            
+            
         elif (cmd == 'cnct'):
             peer = input('Enter peer number:\n')
             check = peer_to_ip_and_port(peer)
