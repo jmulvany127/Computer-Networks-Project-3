@@ -19,6 +19,7 @@ lower = 100000
 filepath = "DATABASE.txt"
 filepath2 = "DATABASE2.txt"
 filepath3 = "newDATABASE.txt"
+filepath4 = "PublicDatabase.txt"
 
 my_p_num = '1'     #peer number of this device
 current_p_num = 0  #peer number of peer in current connection 
@@ -116,13 +117,11 @@ def listen():\
                 return
             else:
                 #print(f'peer:{result[0]} {result[1]} connected\n')
-                
                 #marker for file or text data
                 marker = sock.recv(1024).decode('utf-8')
                 #increments connection count
                 global connections 
-                connections = connections + 1
-                
+                connections = connections + 1     
                 #update tcp_s port and address, this is where our local tcp server socket will be binded to 
                 global tcp_s_port
                 tcp_s_port = tcp_s_port + connections
@@ -176,10 +175,8 @@ def send_message( udp_d_port):
             #opens the udp sending socket 
             send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             send_sock.bind((l_ip, udp_s_port))
-            
             #print(udp_d_port)
             #print(d_ip)
-
             d_adr = (str(d_ip),udp_d_port)
             #print(d_adr)
             #include d_ips //////////////////////////////////////////////////////////////////
@@ -270,7 +267,6 @@ def peer_to_ip_and_port(number):
     return True 
 
 
-
 def main():
     #starts the listener thread, which should always be listening.
     listener = threading.Thread(target=listen, daemon=True)
@@ -286,7 +282,18 @@ def main():
         if(cmd == 'view'):
             print_Dbase()
         elif(cmd == "add"):
-            database_insert(filepath)
+            if(cmd == "add"):
+                first =input ("do you wish to add to database (y/n):")
+                if (first == "y"):
+                     name =input("type in the persons name,If this is unkown, leave this section blank:")
+                     apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
+                     seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
+                     status = input("type in the persons status,If this is unkown, leave this section blank:")
+                     #db_insert(filepath4,name,apperance,seen_last,status)
+                     database_insert(filepath,name,apperance,seen_last,status)
+                     time.sleep(0.2)
+                     db_insert(filepath4,name,apperance,seen_last,status)
+
         elif (cmd == 'cnct'):
             peer = input('Enter peer number:\n')
             check = peer_to_ip_and_port(peer)
@@ -299,7 +306,6 @@ def main():
                 #print(f"{udp_d_port}\n")
             print("Commands: 'msg' -talk to peer, 'file', send database to peer")
             cmd = input('Enter command: \n')
-            
             if (cmd == 'msg'):
                 send_message( udp_d_port)
             elif(cmd == 'file'):

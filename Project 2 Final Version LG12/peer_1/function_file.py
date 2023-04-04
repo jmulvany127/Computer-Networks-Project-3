@@ -1,40 +1,76 @@
 import os.path
 
 #function that inserts into database
-def database_insert(filepath):
+def database_insert(filepath,name,apperance,seen_last,status):
+    #if token doesnt exist write here rn
+        if os.path.isfile(filepath) != True:
+            with open(filepath,"w") as f:
+                print("People:",file=f)
+                print("Name, Apperance, Last Seen, Status, Id",file=f)
+                f.close
+ 
+        f=open(filepath,"r")
+        lines= f.readlines()
+        count = 0
+        for line in lines:
+                count +=1
+        print()
+        f.close
+        with open (filepath,"r+") as f:
+                #first =input ("do you wish to add to database (y/n):")
+                #if (first == "y"):
+                     #name =input("type in the persons name,If this is unkown, leave this section blank:")
+                     #apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
+                     #seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
+                     #status = input("type in the persons status,If this is unkown, leave this section blank:")
+                     #id =r_number_generator(name,apperance,seen_last,status)
+                     #print(id)#debugging
+                #added else might break function
+                #else:
+                    #return
+            for x in range(count):
+                print(lines[x].strip(),file=f)
+            id =r_number_generator(name,apperance,seen_last,status)
+            #print(id)  
+            print(name,",",apperance,",",seen_last,",",status,",",id ,file=f)
+            print()
+            f.close
+            print("Database was written to")
+                #print(token)
+            return
+            
+def db_insert(filepath,name,apperance,last_seen,status):
     #if token doesnt exist write here rn
         if os.path.isfile(filepath) != True:
             with open(filepath,"w") as f:
                 print("People:",file=f)
                 print("Name, Apperance, Last Seen, Status",file=f)
                 f.close
-                return
-        else: 
-            f=open(filepath,"r")
-            lines= f.readlines()
-            count = 0
-            for line in lines:
+        f=open(filepath,"r")
+        lines= f.readlines()
+        count = 0
+        for line in lines:
                 count +=1
-            f.close
-            with open (filepath,"r+") as f:
-                first =input ("do you wish to add to database (y/n):")
-                if (first == "y"):
-                     name =input("type in the persons name,If this is unkown, leave this section blank:")
-                     apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
-                     seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
-                     status = input("type in the persons status,If this is unkown, leave this section blank:")
+        print("counted") #debugging
+        f.close
+        with open (filepath,"r+") as f:
+                #first =input ("do you wish to add to database (y/n):")
+                #if (first == "y"):
+                    # name =input("type in the persons name,If this is unkown, leave this section blank:")
+                     #apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
+                     #seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
+                     #status = input("type in the persons status,If this is unkown, leave this section blank:")
                 #added else might break function
-                else:
-                    return
+                #else:
+                   # return
                 for x in range(count):
                     print(lines[x].strip(),file=f)
-                print(name,",",apperance,",",seen_last,",",status,file=f)
+                print(name,",",apperance,",",last_seen,",",status,file=f)
                 print()
                 f.close
                 print("Database was written to")
                 #print(token)
                 return
-            
             
 #reads in file and puts it into contents
 def database_read(filepath):
@@ -167,8 +203,7 @@ def ip_fetcher(token):
                     print("Token is in database")
                     storage = [contentsplit[0],contentsplit[1],i]
                     f.close
-                    #print (storage)
-                   
+                    #print (storage)                   
                     return storage  
             print("token was not found in database")  
             return False
@@ -270,4 +305,19 @@ def splitting(numbers):
     number= list(map(int,numberssplit))
     numbercorrected = [x - 1 for x in number]
     return numbercorrected
+
+#random number generator, check array of numbers from already on the list then ,hash line to get random number?
+
+def r_number_generator(name,apperance,last_seen,status):
+    x=hash(name)
+    y=hash(apperance)
+    z=hash(last_seen)
+    a=hash(status)
+    #print(x)
+    #print(y)
+    #print(z)
+    #print(a)
+    random_number =hash(x*y*z*a)
+    return random_number
+
 
