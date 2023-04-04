@@ -15,3 +15,4 @@ joe , tall , 03/03/23 , missing
 colm , curly hair , 00000 , missing
 mic , short, blonde, blue eyes, horns , 04/04/2022 , missing
 Steve , small,tall , 11/2/20 , missing
+haffi , hotty , lg12 , dead
