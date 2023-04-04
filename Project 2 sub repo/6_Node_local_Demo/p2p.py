@@ -185,7 +185,7 @@ def listen():
                 global p_port
                 p_port.enqueue(int(data))
                 
-                #print(f"new peer address received {debug_adr}") #debug
+                print(f"new peer address received {int(data)}") #debug
                 
                 
                 global rcved
@@ -287,33 +287,35 @@ def send_file( udp_d_port):
     udp_s_port = (udp_s_port - 1)
     time.sleep(0.2)
     #waits for peer to send back the tcp port number, received will be true here
-    #print(f"waiting for the peer socket address")
-    while True:
-        if (rcved == True):
-            #open tcp client and sends file to peer tcp peer 
-            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-            p_tcp_addr = (str(d_ip1),p_port.dequeue())
-            #print(p_tcp_addr)#debug
-            
-            s.connect((p_tcp_addr))
-            
-            #reads file in byte wise and sends final packet to peer
-            with open(filepath, "rb") as f:
-                msg = 'blank'
-                while(msg != 'send' ):
-                        #wait for send comand to send file (for testing )
-                        if (msg == 'send' ):
-                            msg = input('Input send for file transfer \n ').encode('utf-8')
-                            while True:
-                                bytes_read = f.read(BUFFER_SIZE)
-                                if not bytes_read:
-                                    break
-                                s.sendall(bytes_read)
-                                print ("Database sent")
-                s.close()
-            
-            rcved = False
-            break
+    print(f"waiting for the peer socket address")
+    global rcved
+    while (p_port.size() >0):
+        while True:
+            if (rcved == True):
+                #open tcp client and sends file to peer tcp peer 
+                s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                p_tcp_addr = (str(d_ip1),p_port.dequeue())
+                print(p_tcp_addr)#debug
+                
+                s.connect((p_tcp_addr))
+                #msg = 'blank'
+                #while(msg != 'send' ):
+                    #msg = input('Input send for file transfer \n ')
+                    #wait for send comand to send file (for testing )
+                    #if (msg == 'send' ):
+                        #reads file in byte wise and sends final packet to peer
+                with open(filepath, "rb") as f:                               
+                    while True:
+                        bytes_read = f.read(BUFFER_SIZE)
+                        if not bytes_read:
+                            break
+                        s.sendall(bytes_read)
+                        print ("Database sent")
+
+                    s.close()
+                
+                rcved = False
+                break
 
 #function to print the current data base        
 def print_Dbase():
@@ -339,6 +341,15 @@ def peer_to_ip_and_port(number):
     return True 
     #shouldnt need to anything else as ip+port should be in the global array but declared in there respective functions idk at this point
 
+def file_broadcast_update():
+    total_peers = 3
+    for x in range(total_peers):
+        p = str(x +1)
+        if(p != my_p_num):
+            peer_to_ip_and_port(p)
+            udp_d_port = int(port[0])
+            filer = threading.Thread(target=send_file, daemon=True, args=[ udp_d_port])
+            filer.start()
 
 
 def main():
@@ -360,22 +371,8 @@ def main():
             print_Dbase()
         elif(cmd == "add"):
             database_insert(filepath)
-        elif (cmd == 'all'):
-            
-            
-            check = peer_to_ip_and_port('2')
-            udp_d_port = int(port[0])
-            msgr = threading.Thread(target=send_message, daemon=True, args=[ udp_d_port])
-            msgr.start()
-            
-            check = peer_to_ip_and_port('3')
-            udp_d_port = int(port[0])
-            msgr = threading.Thread(target=send_message, daemon=True, args=[ udp_d_port])
-            msgr.start()
-            
-            while(rcved):
-                i = 1 
-        
+        elif (cmd == 'brdcst'):
+            file_broadcast_update()
         elif (cmd == 'cnct'):
             peer = input('Enter peer number:\n')
             check = peer_to_ip_and_port(peer)

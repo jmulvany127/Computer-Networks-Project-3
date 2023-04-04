@@ -288,6 +288,7 @@ def send_file( udp_d_port):
     time.sleep(0.2)
     #waits for peer to send back the tcp port number, received will be true here
     #print(f"waiting for the peer socket address")
+    global rcved
     while True:
         if (rcved == True):
             #open tcp client and sends file to peer tcp peer 
@@ -296,20 +297,20 @@ def send_file( udp_d_port):
             #print(p_tcp_addr)#debug
             
             s.connect((p_tcp_addr))
-            
-            #reads file in byte wise and sends final packet to peer
-            with open(filepath, "rb") as f:
-                msg = 'blank'
-                while(msg != 'send' ):
-                        #wait for send comand to send file (for testing )
-                        if (msg == 'send' ):
-                            msg = input('Input send for file transfer \n ').encode('utf-8')
-                            while True:
-                                bytes_read = f.read(BUFFER_SIZE)
-                                if not bytes_read:
-                                    break
-                                s.sendall(bytes_read)
-                                print ("Database sent")
+            msg = 'blank'
+            while(msg != 'send' ):
+                msg = input('Input send for file transfer \n ')
+                #wait for send comand to send file (for testing )
+                if (msg == 'send' ):
+                    #reads file in byte wise and sends final packet to peer
+                    with open(filepath, "rb") as f:                               
+                        while True:
+                            bytes_read = f.read(BUFFER_SIZE)
+                            if not bytes_read:
+                                break
+                            s.sendall(bytes_read)
+                            print ("Database sent")
+
                 s.close()
             
             rcved = False
