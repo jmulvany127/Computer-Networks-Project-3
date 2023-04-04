@@ -282,17 +282,7 @@ def main():
         if(cmd == 'view'):
             print_Dbase()
         elif(cmd == "add"):
-            if(cmd == "add"):
-                first =input ("do you wish to add to database (y/n):")
-                if (first == "y"):
-                     name =input("type in the persons name,If this is unkown, leave this section blank:")
-                     apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
-                     seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
-                     status = input("type in the persons status,If this is unkown, leave this section blank:")
-                     #db_insert(filepath4,name,apperance,seen_last,status)
-                     database_insert(filepath,name,apperance,seen_last,status)
-                     time.sleep(0.2)
-                     db_insert(filepath4,name,apperance,seen_last,status)
+            database_wrapper(filepath,filepath4)
 
         elif (cmd == 'cnct'):
             peer = input('Enter peer number:\n')

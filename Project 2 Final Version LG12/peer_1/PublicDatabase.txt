@@ -1,6 +1,4 @@
 People:
 Name, Apperance, Last Seen, Status
-Colm , Dark hair , 27/2 , missing
-Tom , fair hair , 24/1 , missing
-Jack , Red hair,Red nose , 4/1 , missing
-Cian , black hair , 24/1 , missing
+colm , dark hair , 4/4/23 , missing
+colm , darker hair , 4/4/23 , missing

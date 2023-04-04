@@ -35,7 +35,7 @@ def database_insert(filepath,name,apperance,seen_last,status):
             print(name,",",apperance,",",seen_last,",",status,",",id ,file=f)
             print()
             f.close
-            print("Database was written to")
+            #print("Database was written to")
                 #print(token)
             return
             
@@ -51,7 +51,7 @@ def db_insert(filepath,name,apperance,last_seen,status):
         count = 0
         for line in lines:
                 count +=1
-        print("counted") #debugging
+        #print("counted") #debugging
         f.close
         with open (filepath,"r+") as f:
                 #first =input ("do you wish to add to database (y/n):")
@@ -321,3 +321,14 @@ def r_number_generator(name,apperance,last_seen,status):
     return random_number
 
 
+def database_wrapper(filepath,filepath4):
+            first =input ("do you wish to add to database (y/n):")
+            if (first == "y"):
+                     name =input("type in the persons name,If this is unkown, leave this section blank:")
+                     apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
+                     seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
+                     status = input("type in the persons status,If this is unkown, leave this section blank:")
+                     #db_insert(filepath4,name,apperance,seen_last,status)
+                     database_insert(filepath,name,apperance,seen_last,status)
+                     #time.sleep(0.2)
+                     db_insert(filepath4,name,apperance,seen_last,status)
