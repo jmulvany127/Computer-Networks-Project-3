@@ -28,13 +28,13 @@ my_token = 1       #gloabl variable declaration, will be replaced in functions
 connections = 0
 
 #ip and port numbers
-l_ip = '10.35.70.1'   #local ip- insert device ip here 
+l_ip = '10.6.5.240'   #local ip- insert device ip here 
 
 udp_l_port = (33000 + int(my_p_num))     #listening port
 udp_s_port = (33100 +  int(my_p_num))     #source port for sender
 
 tcp_s_port = (33150 + 10*int(my_p_num) )  #tcp local server address
-tcp_s_adr = ('10.35.70.1' , tcp_s_port) #tcp local server address
+tcp_s_adr = ('10.6.5.240', tcp_s_port) #tcp local server address
 
 rsp_d_ip = '127.0.0.1' #ip address of most recent peer, will be edited by functions 
 p_port = 33000 #base port for new peers, will be edited by functions
@@ -42,8 +42,6 @@ p_addr = (rsp_d_ip, p_port) #global variable base address for new peers will be 
 
 
 rcved = False #boolean to indicate whether or not peer TCP Connection recievd
-
-             
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
 def msg_server():
@@ -65,6 +63,7 @@ def msg_server():
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
+
 #change filepath here to filepath1?
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
@@ -147,9 +146,7 @@ def listen():\
                     f_server.start()
                 elif (marker == 't'):
                     m_server = threading.Thread(target=msg_server, daemon=True)
-                    m_server.start()
-                
-                
+                    m_server.start()                
                 #send our local tcp server port to the peer
                 send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 send_sock.bind((l_ip, udp_s_port))
@@ -158,19 +155,18 @@ def listen():\
                 #print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
             
         #numbers in this range are receved tcp port numbers
-        elif (int(data) >= 32000 and int(data) <=60000):
+        elif (int(data) >= 50000 and int(data) <=60000):
             #update the peer port 
             global p_port
             p_port = int(data)
             
             global p_addr
             p_addr = (str(d_ip), p_port)
-            print(f"new peer address received {p_addr}") #debug
+            #print(f"new peer address received {p_addr}") #debug
             global rcved
             
             #upate the received variable
-            rcved = True 
-            
+            rcved = True             
         else:
             print ("data unrecognised, connection blocked\n")
 
@@ -183,22 +179,17 @@ def send_message( udp_d_port):
             
             #print(udp_d_port)
             #print(d_ip)
-            
+
             d_adr = (str(d_ip),udp_d_port)
             #print(d_adr)
-            
             #include d_ips //////////////////////////////////////////////////////////////////
             send_sock.sendto(str(my_token).encode(), d_adr)
-            
             time.sleep(0.1)
             marker = 't'
             send_sock.sendto(marker.encode(), (str(d_ip), udp_d_port))
             send_sock.close()
-            
-           
             global p_port 
             global rcved
-            
             time.sleep(0.2)
             #waits for peer to send back the tcp port number, received will be true here
             print(f"waiting for the peer socket address")
@@ -207,7 +198,6 @@ def send_message( udp_d_port):
                     #open tcp client and send message to peer tcp peer 
                     s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
                     #print(p_addr)
-                    
                     s.connect((p_addr))
                     msg = input('Input peer message: \n ').encode('utf-8')
                     s.send(msg)
@@ -266,7 +256,6 @@ def print_Dbase():
 #function to handle user inputted peer number and return address if peer recognised   
 ## functions stores everything in globals and returns true if successful 
 def peer_to_ip_and_port(number):
-    
     check = number_check(number)
     if (check ==False):
         return False
@@ -283,15 +272,12 @@ def peer_to_ip_and_port(number):
 
 
 def main():
-    
     #starts the listener thread, which should always be listening.
     listener = threading.Thread(target=listen, daemon=True)
     listener.start()
-    
     #gets token number of this device frm file and update gloabl variable
     global my_token
     my_token = get_my_token(my_p_num)
-  
     time.sleep(0.2)
     while True:  
         print("Commands: 'cnct' -connect to peers to peer, 'view' view the current database, 'add' to add to the database")

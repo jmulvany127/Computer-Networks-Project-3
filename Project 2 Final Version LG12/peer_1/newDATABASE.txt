@@ -1,12 +1,12 @@
 People:
 Name , Apperance, Last Seen, Status
 Kane , red hair wears glasses blue eyes, 15/2 , missing
-Tom , fair hair green eyes , 24/1 , missing
-Steve , small,tall , 11/2/20 , missing
-Jake , fair hair blue eyes , 17/2 , missing
-Jack , blonde hair , blue eyes , 4/1 , missing
-Ronan , dark hair wears glasses brown eyes, 1/3, missing
-Colm , dark hair blue eyes, 27/2 , missing
-haffi , hotty , lg12 , dead
-Anna , brown hair , brown eyes , 3/25 , missing
 Cian , red hair wears glasses brown eyes, 22/2 , missing
+Tom , fair hair green eyes , 24/1 , missing
+Anna , brown hair , brown eyes , 3/25 , missing
+Jack , blonde hair , blue eyes , 4/1 , missing
+haffi , hotty , lg12 , dead
+Colm , dark hair blue eyes, 27/2 , missing
+Ronan , dark hair wears glasses brown eyes, 1/3, missing
+Jake , fair hair blue eyes , 17/2 , missing
+Steve , small,tall , 11/2/20 , missing
