@@ -1,12 +1,6 @@
 People:
-Name , Apperance, Last Seen, Status
-Steve , small,tall , 11/2/20 , missing
-Jack , blonde hair , blue eyes , 4/1 , missing
-Anna , brown hair , brown eyes , 3/25 , missing
-Jake , fair hair blue eyes , 17/2 , missing
-haffi , hotty , lg12 , dead
-Kane , red hair wears glasses blue eyes, 15/2 , missing
-Colm , dark hair blue eyes, 27/2 , missing
-Cian , red hair wears glasses brown eyes, 22/2 , missing
-Ronan , dark hair wears glasses brown eyes, 1/3, missing
-Tom , fair hair green eyes , 24/1 , missing
+Name, Apperance, Last Seen, Status, Id
+Colm , Dark hair , 27/2 , missing , 71827985252845520
+Tom , fair hair , 24/1 , missing , -198417211273058474
+Jack , Red hair,Red nose , 4/1 , missing , 9966591212301776
+Cian , black hair , 24/1 , missing , -1273650880208104770

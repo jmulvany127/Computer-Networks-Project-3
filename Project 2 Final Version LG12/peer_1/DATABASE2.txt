@@ -1,4 +1,4 @@
-People:
+TomPeople:
 Name , Apperance, Last Seen, Status
 Colm , dark hair blue eyes, 27/2 , missing
 Tom , fair hair green eyes , 24/1 , missing
