@@ -1,6 +1,11 @@
 People:
 Name, Apperance, Last Seen, Status, Id
-Colm , Dark hair , 27/2 , missing , 71827985252845520
-Tom , fair hair , 24/1 , missing , -198417211273058474
-Jack , Red hair,Red nose , 4/1 , missing , 9966591212301776
-Cian , black hair , 24/1 , missing , -1273650880208104770
+colm , dark hair , 4/4/23 , missing , 63635195000989714
+colm , darker hair , 4/4/23 , missing , -16766150909831762
+Tom , Fair Hairr , 27/1/23 , Missing , 1069146220324556353
+Jack , red hair,red nose , 1/1/20 , missing , 1999638532281541511
+Joe , Dark hair , 3/21/23 , missing , -1376297380295378804
+Cian , blue eyes , 1/2/21 , Missing , -228891484088714179
+Jake , dark hair , 23/3/23 , Missing , -2240419213237854966
+g , g , g , g , 2302340738775236961
+e , e , e , e , 1863494585681341767

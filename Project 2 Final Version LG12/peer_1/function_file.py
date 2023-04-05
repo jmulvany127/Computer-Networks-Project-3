@@ -1,4 +1,5 @@
 import os.path
+import time
 
 #function that inserts into database
 def database_insert(filepath,name,apperance,seen_last,status):
@@ -35,10 +36,11 @@ def database_insert(filepath,name,apperance,seen_last,status):
             print(name,",",apperance,",",seen_last,",",status,",",id ,file=f)
             print()
             f.close
-            print("Database was written to")
+            #print("Database was written to")
                 #print(token)
             return
-            
+        
+#redundant function, should not be used,however it works.            
 def db_insert(filepath,name,apperance,last_seen,status):
     #if token doesnt exist write here rn
         if os.path.isfile(filepath) != True:
@@ -51,7 +53,7 @@ def db_insert(filepath,name,apperance,last_seen,status):
         count = 0
         for line in lines:
                 count +=1
-        print("counted") #debugging
+        #print("counted") #debugging
         f.close
         with open (filepath,"r+") as f:
                 #first =input ("do you wish to add to database (y/n):")
@@ -78,18 +80,16 @@ def database_read(filepath):
     if not os.path.isfile(filepath):
         print("Error: file does not exist")
         return []
-
     # Open file and read contents
     with open(filepath, "r") as f:
         contents = f.readlines()
-
     # Remove newline characters from end of each line
     contents = [line.strip() for line in contents]
     # Return contents as list
     return contents          
 
 #merges arrays from second element used to print in file_comparer
-def merge_arrays_without_duplicates(array1, array2):
+def merge_arrays_no_dupes(array1, array2):
     # Combine arrays starting from the second element
     array3 = array1[2:] + array2[2:]
     # Remove duplicates and add the first element from each array
@@ -104,7 +104,8 @@ def write_array_to_file(filepath, array):
 def count_lines(filename):
     with open(filename, 'r') as file:
         return len(file.readlines())
-#returns name of peer 
+    
+#returns name of peer ,last value in token.txt file
 def get_peer_location(file_path, line_number):
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -117,7 +118,7 @@ def get_peer_location(file_path, line_number):
 def file_comparer(filepath,filepath2,filepath3):
     content = database_read(filepath) 
     content2 = database_read(filepath2)
-    merged_array= merge_arrays_without_duplicates(content,content2)
+    merged_array= merge_arrays_no_dupes(content,content2)
     write_array_to_file(filepath3,merged_array)
 
 
@@ -275,9 +276,7 @@ def get_my_token(my_p_num):
     my_p_num =str(my_p_num)
     correctnums =splitting(my_p_num)
     storage = []
-
     storage = token_arrays(correctnums)
-
     return storage[0]
 
 #function that breaks storage down and gives the ip address that is necessary
@@ -313,11 +312,30 @@ def r_number_generator(name,apperance,last_seen,status):
     y=hash(apperance)
     z=hash(last_seen)
     a=hash(status)
-    #print(x)
-    #print(y)
-    #print(z)
-    #print(a)
     random_number =hash(x*y*z*a)
     return random_number
 
+def database_wrapper(database,publicdatabase):
+            first =input ("do you wish to add to database (y/n):")
+            if (first == "y"):
+                     name =input("type in the persons name,If this is unknown, leave this section blank:")
+                     apperance= input("type in the persons Apperance,If this is unknown, leave this section blank:")
+                     seen_last =input("type in the persons last seen,If this is unknown, leave this section blank:")
+                     status = input("type in the persons status,If this is unknown, leave this section blank:")
+                     #db_insert(filepath4,name,apperance,seen_last,status)
+                     database_insert(database,name,apperance,seen_last,status)
+                     #time.sleep(0.2)
+                     database_public_creator(database,publicdatabase)
 
+def database_public_creator(input_filepath, output_filepath):#input filepath is going to be database while output filepath is going to be public database.
+    with open(input_filepath, 'r') as input:
+        # Read the first line to get the field names
+        field_names = input.readline().strip().split(',')        
+        # Create the output file and write the header and field names
+        with open(output_filepath, 'w') as out:
+            print("People:",file=out)
+            print("Name, Apperance, Last Seen, Status",file=out)
+            # Write the data lines
+            for line in input:
+                fields = line.strip().split(',')
+                out.write(','.join(fields[:-1]) + '\n')

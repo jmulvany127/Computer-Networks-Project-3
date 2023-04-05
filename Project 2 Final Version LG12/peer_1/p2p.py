@@ -100,8 +100,6 @@ def listen():\
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((l_ip, udp_l_port))
     #print ('listening',({l_ip},{udp_l_port}))
-    
-    
     while True:
         #blocking call reads in and decodes data 
         data = sock.recv(1024).decode('utf-8')
@@ -229,7 +227,7 @@ def send_file( udp_d_port):
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             s.connect((p_addr))
             #reads file in byte wise and sends final packet to peer
-            with open(filepath, "rb") as f:
+            with open(filepath2, "rb") as f:
                 while True:
                     bytes_read = f.read(BUFFER_SIZE)
                     if not bytes_read:
@@ -238,15 +236,14 @@ def send_file( udp_d_port):
                     print ("Database sent")
                   #  progress.update(len(bytes_read))
             s.close()
-            
+            file_comparer(filepath,filepath2,filepath)
             rcved = False
             p_port = 50000
             break
 
 #function to print the current data base        
-def print_Dbase():
+def print_Dbase(filepath):
     with open(filepath, "r") as file:
-        
         file_contents = file.read()
         print(file_contents)
 
@@ -276,24 +273,15 @@ def main():
     my_token = get_my_token(my_p_num)
     time.sleep(0.2)
     while True:  
-        print("Commands: 'cnct' -connect to peers to peer, 'view' view the current database, 'add' to add to the database")
+        print("Commands: 'cnct' -connect to peers to peer, 'view' view the current database,'view public' to view the public database ,'add' to add to the database")
         cmd = input('Enter command: \n')
 
         if(cmd == 'view'):
-            print_Dbase()
+            print_Dbase(filepath)
+        elif(cmd == "view public"):
+            print_Dbase(filepath4)
         elif(cmd == "add"):
-            if(cmd == "add"):
-                first =input ("do you wish to add to database (y/n):")
-                if (first == "y"):
-                     name =input("type in the persons name,If this is unkown, leave this section blank:")
-                     apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
-                     seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
-                     status = input("type in the persons status,If this is unkown, leave this section blank:")
-                     #db_insert(filepath4,name,apperance,seen_last,status)
-                     database_insert(filepath,name,apperance,seen_last,status)
-                     time.sleep(0.2)
-                     db_insert(filepath4,name,apperance,seen_last,status)
-
+            database_wrapper(filepath,filepath4)
         elif (cmd == 'cnct'):
             peer = input('Enter peer number:\n')
             check = peer_to_ip_and_port(peer)
@@ -302,7 +290,6 @@ def main():
                 continue
             else:
                 udp_d_port = int(port[0])
-            
                 #print(f"{udp_d_port}\n")
             print("Commands: 'msg' -talk to peer, 'file', send database to peer")
             cmd = input('Enter command: \n')
@@ -311,7 +298,5 @@ def main():
             elif(cmd == 'file'):
                 send_file( udp_d_port)
 
-            
-        
 if __name__ == "__main__":
     main() 
