@@ -227,7 +227,7 @@ def send_file( udp_d_port):
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             s.connect((p_addr))
             #reads file in byte wise and sends final packet to peer
-            with open(filepath, "rb") as f:
+            with open(filepath2, "rb") as f:
                 while True:
                     bytes_read = f.read(BUFFER_SIZE)
                     if not bytes_read:
@@ -236,6 +236,7 @@ def send_file( udp_d_port):
                     print ("Database sent")
                   #  progress.update(len(bytes_read))
             s.close()
+            file_comparer(filepath,filepath2,filepath)
             rcved = False
             p_port = 50000
             break

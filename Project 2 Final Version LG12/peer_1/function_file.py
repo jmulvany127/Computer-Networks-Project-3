@@ -89,7 +89,7 @@ def database_read(filepath):
     return contents          
 
 #merges arrays from second element used to print in file_comparer
-def merge_arrays_without_duplicates(array1, array2):
+def merge_arrays_no_dupes(array1, array2):
     # Combine arrays starting from the second element
     array3 = array1[2:] + array2[2:]
     # Remove duplicates and add the first element from each array
@@ -104,7 +104,8 @@ def write_array_to_file(filepath, array):
 def count_lines(filename):
     with open(filename, 'r') as file:
         return len(file.readlines())
-#returns name of peer 
+    
+#returns name of peer ,last value in token.txt file
 def get_peer_location(file_path, line_number):
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -117,7 +118,7 @@ def get_peer_location(file_path, line_number):
 def file_comparer(filepath,filepath2,filepath3):
     content = database_read(filepath) 
     content2 = database_read(filepath2)
-    merged_array= merge_arrays_without_duplicates(content,content2)
+    merged_array= merge_arrays_no_dupes(content,content2)
     write_array_to_file(filepath3,merged_array)
 
 
