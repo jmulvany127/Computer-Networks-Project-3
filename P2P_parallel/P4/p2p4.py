@@ -19,7 +19,7 @@ port = []
 upper = 99999999999999
 lower = 100000
 #file location and size
-filepath = "C:\\Users\\jsmul\\Desktop\\College Year 3\\Semester 2\\3D3 Computer Networks\\Project 2\\project 2 repo\\Final v3\\6 p2p local demo\\DATABASE4.txt"
+filepath = "DATABASE4.txt"
 filesize = os.path.getsize(filepath)
 
 

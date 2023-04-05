@@ -46,7 +46,9 @@ p_port = Queue() #queue which holds new peer addresses
 bfr = Queue() #buffer for listening server data 
 
 alarm_state = True #for different messager functionality
-             
+
+lock = threading.Lock() #mutexe locking 
+            
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
 def msg_server():
@@ -83,7 +85,10 @@ def file_server():
     print(f"[*] Listening as file server {tcp_s_adr}")
     client_socket, address = file_server.accept()
     print(f"[+] peer {current_p_num} is connected.")
-
+    
+    # acquire the lock
+    lock.acquire()
+    print(f"Mutex acquired by peer {current_p_num}")
     #while loop reads in bytes, saves bytes and then overwrites local file with these bytes 
     while True:
         bytes_read = client_socket.recv(BUFFER_SIZE)
@@ -91,8 +96,9 @@ def file_server():
             break
         f = open(filepath, "wb")
         f.write(bytes_read)
-    print ("Database received")
+    print (f"Database received from peer {current_p_num}")
     #    progress.update(len(bytes_read))
+    lock.release()
     client_socket.close()
     file_server.close()
     
