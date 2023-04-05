@@ -1,4 +1,5 @@
 import os.path
+import time
 
 #function that inserts into database
 def database_insert(filepath,name,apperance,seen_last,status):
@@ -38,7 +39,8 @@ def database_insert(filepath,name,apperance,seen_last,status):
             #print("Database was written to")
                 #print(token)
             return
-            
+        
+#redundant function, should not be used,however it works.            
 def db_insert(filepath,name,apperance,last_seen,status):
     #if token doesnt exist write here rn
         if os.path.isfile(filepath) != True:
@@ -78,11 +80,9 @@ def database_read(filepath):
     if not os.path.isfile(filepath):
         print("Error: file does not exist")
         return []
-
     # Open file and read contents
     with open(filepath, "r") as f:
         contents = f.readlines()
-
     # Remove newline characters from end of each line
     contents = [line.strip() for line in contents]
     # Return contents as list
@@ -275,9 +275,7 @@ def get_my_token(my_p_num):
     my_p_num =str(my_p_num)
     correctnums =splitting(my_p_num)
     storage = []
-
     storage = token_arrays(correctnums)
-
     return storage[0]
 
 #function that breaks storage down and gives the ip address that is necessary
@@ -313,22 +311,30 @@ def r_number_generator(name,apperance,last_seen,status):
     y=hash(apperance)
     z=hash(last_seen)
     a=hash(status)
-    #print(x)
-    #print(y)
-    #print(z)
-    #print(a)
     random_number =hash(x*y*z*a)
     return random_number
 
-
-def database_wrapper(filepath,filepath4):
+def database_wrapper(database,publicdatabase):
             first =input ("do you wish to add to database (y/n):")
             if (first == "y"):
-                     name =input("type in the persons name,If this is unkown, leave this section blank:")
-                     apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
-                     seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
-                     status = input("type in the persons status,If this is unkown, leave this section blank:")
+                     name =input("type in the persons name,If this is unknown, leave this section blank:")
+                     apperance= input("type in the persons Apperance,If this is unknown, leave this section blank:")
+                     seen_last =input("type in the persons last seen,If this is unknown, leave this section blank:")
+                     status = input("type in the persons status,If this is unknown, leave this section blank:")
                      #db_insert(filepath4,name,apperance,seen_last,status)
-                     database_insert(filepath,name,apperance,seen_last,status)
+                     database_insert(database,name,apperance,seen_last,status)
                      #time.sleep(0.2)
-                     db_insert(filepath4,name,apperance,seen_last,status)
+                     database_public_creator(database,publicdatabase)
+
+def database_public_creator(input_filepath, output_filepath):#input filepath is going to be database while output filepath is going to be public database.
+    with open(input_filepath, 'r') as input:
+        # Read the first line to get the field names
+        field_names = input.readline().strip().split(',')        
+        # Create the output file and write the header and field names
+        with open(output_filepath, 'w') as out:
+            print("People:",file=out)
+            print("Name, Apperance, Last Seen, Status",file=out)
+            # Write the data lines
+            for line in input:
+                fields = line.strip().split(',')
+                out.write(','.join(fields[:-1]) + '\n')
