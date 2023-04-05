@@ -2,8 +2,7 @@ import socket
 import threading
 import os.path
 import time
-###READ ME- DEAL WITH D_IP WITH SOME FORM OF QUEUE
-###COMMMENT and tidy up code (p_port and p- adres)
+
 
 from q import*
 from function_file import *
@@ -19,7 +18,7 @@ port = []
 upper = 99999999999999
 lower = 100000
 #file location and size
-filepath = "C:\\Users\\jsmul\\Desktop\\College Year 3\\Semester 2\\3D3 Computer Networks\\Project 2\\project 2 repo\\Final v3\\6 p2p local demo\\DATABASE4.txt"
+filepath = "DATABASE4.txt"
 filesize = os.path.getsize(filepath)
 
 
@@ -46,7 +45,9 @@ p_port = Queue() #queue which holds new peer addresses
 bfr = Queue() #buffer for listening server data 
 
 alarm_state = True #for different messager functionality
-             
+
+lock = threading.Lock() #mutexe locking 
+            
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
 def msg_server():
@@ -83,7 +84,10 @@ def file_server():
     print(f"[*] Listening as file server {tcp_s_adr}")
     client_socket, address = file_server.accept()
     print(f"[+] peer {current_p_num} is connected.")
-
+    
+    # acquire the lock
+    lock.acquire()
+    print(f"Mutex acquired by peer {current_p_num}")
     #while loop reads in bytes, saves bytes and then overwrites local file with these bytes 
     while True:
         bytes_read = client_socket.recv(BUFFER_SIZE)
@@ -91,8 +95,9 @@ def file_server():
             break
         f = open(filepath, "wb")
         f.write(bytes_read)
-    print ("Database received")
+    print (f"Database received from peer {current_p_num}")
     #    progress.update(len(bytes_read))
+    lock.release()
     client_socket.close()
     file_server.close()
     
