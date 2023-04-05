@@ -20,6 +20,7 @@ upper = 99999999999999
 lower = 100000
 #file location and size
 filepath = "DATABASE1.txt"
+tempdb = "tempDB.txt"
 filesize = os.path.getsize(filepath)
 
 
@@ -87,21 +88,23 @@ def file_server():
     print(f"[+] peer {current_p_num} is connected.")
     
     # acquire the lock
-    lock.acquire()
+    #lock.acquire()
     print(f"Mutex acquired by peer {current_p_num}")
     #while loop reads in bytes, saves bytes and then overwrites local file with these bytes 
     while True:
         bytes_read = client_socket.recv(BUFFER_SIZE)
         if not bytes_read:
             break
-        f = open(filepath, "wb")
-        f.write(bytes_read)
+        f = open(tempdb, "wb")
+        f.write(bytes_read)   
     print (f"Database received from peer {current_p_num}")
+    
     #    progress.update(len(bytes_read))
-    lock.release()
+    
     client_socket.close()
     file_server.close()
-    
+    file_comparer(filepath,tempdb)
+   # lock.release()
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
