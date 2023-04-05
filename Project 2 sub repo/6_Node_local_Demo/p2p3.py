@@ -19,11 +19,11 @@ port = []
 upper = 99999999999999
 lower = 100000
 #file location and size
-filepath = "C:\\Users\\jsmul\\Desktop\\College Year 3\\Semester 2\\3D3 Computer Networks\\Project 2\\project 2 repo\\Final v3\\6 p2p local demo\\DATABASE1.txt"
+filepath = "C:\\Users\\jsmul\\Desktop\\College Year 3\\Semester 2\\3D3 Computer Networks\\Project 2\\project 2 repo\\Final v3\\6 p2p local demo\\DATABASE4.txt"
 filesize = os.path.getsize(filepath)
 
 
-my_p_num = '1'     #peer number of this device
+my_p_num = '4'     #peer number of this device
 current_p_num = 0  #peer number of peer in current connection 
 my_token = 1       #gloabl variable declaration, will be replaced in functions
 

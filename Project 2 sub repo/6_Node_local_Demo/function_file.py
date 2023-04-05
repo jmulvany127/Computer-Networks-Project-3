@@ -27,7 +27,7 @@ def database_insert(filepath):
                      status = input("type in the persons status,If this is unkown, leave this section blank:")
                 #added else might break function
                 else:
-                    return
+                    return True
                 for x in range(count):
                     print(lines[x].strip(),file=f)
                 print(name,",",apperance,",",seen_last,",",status,file=f)

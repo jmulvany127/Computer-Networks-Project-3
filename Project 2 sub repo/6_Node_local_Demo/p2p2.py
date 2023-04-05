@@ -41,11 +41,11 @@ tcp_s_adr = (l_ip, tcp_s_port) #tcp local server address
 
 rsp_d_ip = '127.0.0.1' #ip address of most recent peer, will be edited by functions 
 
-rcved = False #boolean to indicate whether or not peer TCP Connection recievd
-
 d_ip = Queue() #queue which holds new peers ips
 p_port = Queue() #queue which holds new peer addresses 
 bfr = Queue() #buffer for listening server data 
+
+alarm_state = True #for different messager functionality
              
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
@@ -183,22 +183,16 @@ def listen():
             elif (int(data) >= 50000 and int(data) <=60000):
                 #update the peer port 
                 global p_port
-                p_port.enqueue(int(data))
-                
-                #print(f"new peer address received {debug_adr}") #debug
-                
-                
-                global rcved
-                #upate the received variable
-                rcved = True 
-                
+                p_port.enqueue(int(data))               
+                print(f"new peer address received {int(data)}") #debug                                                                 
             else:
                 print ("data unrecognised, connection blocked\n")
         
 
 #function to send typed messages to peer
 def send_message( udp_d_port):
-            global udp_s_port
+            global udp_s_port          
+            global alarm_state
             #opens the udp sending socket 
             send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             send_sock.bind((l_ip, udp_s_port))
@@ -228,31 +222,34 @@ def send_message( udp_d_port):
             udp_s_port = (udp_s_port - 1)
            
             
-            global rcved
+            
             time.sleep(0.2)
             #waits for peer to send back the tcp port number, received will be true here
             print(f"waiting for the peer socket address")
             #will run aslong as there are destination ports in teh queue
             while (p_port.size() >0):
-                if (rcved == True):
-                    
-                    #open tcp client and send message to peer tcp peer 
-                    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                    p_tcp_addr = (str(d_ip1),p_port.dequeue())
-                    #print(p_tcp_addr)#debug
-                    msg = 'blank'
-                    s.connect((p_tcp_addr))
+                                   
+                #open tcp client and send message to peer tcp peer 
+                s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                p_tcp_addr = (str(d_ip1),p_port.dequeue())
+                print(p_tcp_addr)#debug
                 
+                msg = 'alarm'
+                s.connect((p_tcp_addr))
+                if (alarm_state == True):
+                    msg = msg.encode('utf-8')
+                    s.send(msg)
+                    
+                else:
                     while(msg != 'quit' ):
-                         #accept user input for message
-                         if (msg != 'quit' ):
-                             msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
-                             s.send(msg)
-                             msg = msg.decode('utf-8')
-                          
-                    s.close() 
-                    rcved = False
-                    break 
+                        #accept user input for message
+                        if (msg != 'quit' ):
+                            msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
+                            s.send(msg)
+                            msg = msg.decode('utf-8')
+                s.close() 
+                    
+                break 
         
 #function to send files to peer        
 def send_file( udp_d_port):
@@ -287,32 +284,33 @@ def send_file( udp_d_port):
     udp_s_port = (udp_s_port - 1)
     time.sleep(0.2)
     #waits for peer to send back the tcp port number, received will be true here
-    #print(f"waiting for the peer socket address")
-    while True:
-        if (rcved == True):
+    print(f"waiting for the peer socket address")
+ 
+    while (p_port.size() >0):
+        while True:
+            
             #open tcp client and sends file to peer tcp peer 
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             p_tcp_addr = (str(d_ip1),p_port.dequeue())
-            #print(p_tcp_addr)#debug
+            print(p_tcp_addr)#debug
             
             s.connect((p_tcp_addr))
-            
-            #reads file in byte wise and sends final packet to peer
-            with open(filepath, "rb") as f:
-                msg = 'blank'
-                while(msg != 'send' ):
-                        #wait for send comand to send file (for testing )
-                        if (msg == 'send' ):
-                            msg = input('Input send for file transfer \n ').encode('utf-8')
-                            while True:
-                                bytes_read = f.read(BUFFER_SIZE)
-                                if not bytes_read:
-                                    break
-                                s.sendall(bytes_read)
-                                print ("Database sent")
+            #msg = 'blank'
+            #while(msg != 'send' ):
+                #msg = input('Input send for file transfer \n ')
+                #wait for send comand to send file (for testing )
+                #if (msg == 'send' ):
+                    #reads file in byte wise and sends final packet to peer
+            with open(filepath, "rb") as f:                               
+                while True:
+                    bytes_read = f.read(BUFFER_SIZE)
+                    if not bytes_read:
+                        break
+                    s.sendall(bytes_read)
+                    print ("Database sent")
+
                 s.close()
-            
-            rcved = False
+                            
             break
 
 #function to print the current data base        
@@ -339,7 +337,28 @@ def peer_to_ip_and_port(number):
     return True 
     #shouldnt need to anything else as ip+port should be in the global array but declared in there respective functions idk at this point
 
+def file_broadcast_update():
+    total_peers = 3
+    for x in range(total_peers):
+        p = str(x +1)
+        if(p != my_p_num):
+            peer_to_ip_and_port(p)
+            udp_d_port = int(port[0])
+            filer = threading.Thread(target=send_file, daemon=True, args=[ udp_d_port])
+            filer.start()
 
+def alarm_broadcast():
+    global alarm_state
+    total_peers = 3
+    for x in range(total_peers):
+        alarm_state = True
+        p = str(x +1)
+        if(p != my_p_num):
+            peer_to_ip_and_port(p)
+            udp_d_port = int(port[0])
+            filer = threading.Thread(target=send_message, daemon=True, args=[udp_d_port])
+            filer.start()
+    
 
 def main():
     
@@ -351,32 +370,26 @@ def main():
     global my_token
     my_token = get_my_token(my_p_num)
   
-    time.sleep(0.2)
+    
     while True:  
-        print("Commands: 'cnct' -connect to peers to peer, 'view' view the current database, 'add' to add to the database")
+        #wait for previous actions to complete and print to console 
+        time.sleep(0.5)
+        print("Commands: \n 'cnct' -connect to peer to peer \n 'view' -view the current database \n 'add' -to add to the database")
+        print(" 'alrm' -Send Emergency notification to all peers \n 'brdcst' -Manually broadcast a file update \n ")
         cmd = input('Enter command: \n')
 
         if(cmd == 'view'):
             print_Dbase()
         elif(cmd == "add"):
             database_insert(filepath)
-        elif (cmd == 'all'):
-            
-            
-            check = peer_to_ip_and_port('2')
-            udp_d_port = int(port[0])
-            msgr = threading.Thread(target=send_message, daemon=True, args=[ udp_d_port])
-            msgr.start()
-            
-            check = peer_to_ip_and_port('3')
-            udp_d_port = int(port[0])
-            msgr = threading.Thread(target=send_message, daemon=True, args=[ udp_d_port])
-            msgr.start()
-            
-            while(rcved):
-                i = 1 
-        
+            file_broadcast_update()
+        elif (cmd == 'brdcst'):
+            file_broadcast_update()
+        elif (cmd == 'alrm'):
+            alarm_broadcast()
         elif (cmd == 'cnct'):
+            global alarm_state
+            alarm_state = False
             peer = input('Enter peer number:\n')
             check = peer_to_ip_and_port(peer)
             #print(check)
