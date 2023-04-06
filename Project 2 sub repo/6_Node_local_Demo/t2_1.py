@@ -6,7 +6,7 @@ import time
 ###COMMMENT and tidy up code (p_port and p- adres)
 
 from q import*
-from function_file import *
+from function_file_t2 import *
 
 BUFFER_SIZE = 65536
 SEPARATOR = "<SEPARATOR>"
@@ -17,7 +17,7 @@ port = []
 
 
 #file location and size
-filepath = "DATABASE5.txt"
+filepath = "t1nodes.txt"
 filesize = os.path.getsize(filepath)
 
 
@@ -97,7 +97,7 @@ def send_my_adrs( t1_port):
             print(my_adrs)
             #send our token to peer so they can verify we are trusted
             send_sock.sendto(str(rfrsh_code).encode(), d_adrs)
-            time.sleep(0.2)
+            time.sleep(0.01)
             send_sock.sendto(my_adrs.encode(), d_adrs)
 
             send_sock.close()
