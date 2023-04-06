@@ -20,7 +20,7 @@ filepath2 = "DATABASE2.txt"
 filepath = "DATABASE.txt"
 filepath3 = "newDATABASE.txt"
 filepath4 = "PublicDatabase.txt"
-
+tokenfile= "token.txt"
 my_p_num = '1'     #peer number of this device
 current_p_num = 0  #peer number of peer in current connection 
 my_token = 1       #gloabl variable declaration, will be replaced in functions
@@ -51,14 +51,20 @@ def msg_server():
     msg_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     msg_server.bind(tcp_s_adr)
     msg_server.listen(10)
-    
+    ms_p_num = current_p_num
     print(f"[*] Listening as message server {tcp_s_adr}")
     client_socket, address = msg_server.accept()
     print(f"[+] peer {current_p_num} is connected.")
-    
-    recieved = client_socket.recv(1024)
-    recieved = recieved.decode('utf-8')
-    print((recieved))
+    #peer number into token file like location
+    recieved = 'blank'
+    while (recieved != ''):
+        recieved = client_socket.recv(1024)
+        recieved = recieved.decode('utf-8')
+        #print((recieved))
+        if recieved =='':
+            break
+        x=get_peer_location(tokenfile,ms_p_num)
+        print(f"Peer {x}:{recieved}")
 
     msg_server.close()
     
