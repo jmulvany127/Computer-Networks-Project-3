@@ -21,8 +21,8 @@ lower = 100000
 #file location and size
 filepath = "DATABASE1.txt"
 filesize = os.path.getsize(filepath)
-
-
+tokenfile = "token.txt"
+public_filepath = "public_Filepath.txt"
 my_p_num = '1'     #peer number of this device
 current_p_num = 0  #peer number of peer in current connection 
 my_token = 1       #gloabl variable declaration, will be replaced in functions
@@ -57,16 +57,21 @@ def msg_server():
     msg_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     msg_server.bind(tcp_s_adr)
     msg_server.listen(10)
-    
+    ms_p_num = current_p_num
     print(f"[*] Listening as message server {tcp_s_adr}")
     client_socket, address = msg_server.accept()
-    print(f"[+] peer {current_p_num} is connected.")
+    location=get_peer_location(tokenfile,ms_p_num)
+    print(f"[+]{location} is connected.")
     
     recieved = 'blank'
     while (recieved != ''):
         recieved = client_socket.recv(1024)
         recieved = recieved.decode('utf-8')
-        print((recieved))
+        #print((recieved))
+        if recieved =='':
+            break
+        currentlocation=get_peer_location(tokenfile,ms_p_num)
+        print(f"From {currentlocation}:{recieved}")       
 
     msg_server.close()
     
@@ -119,7 +124,6 @@ def listen():
     
     
     while True:
-        
         #blocking call reads in and decodes data 
         rcvd_data = sock.recv(1024).decode('utf-8')
         print (f"received data {rcvd_data}") #debug
@@ -135,11 +139,9 @@ def listen():
             
             #if data is in right range to be a token
             if ((int(data) >= lower and int(data) <= upper) ):
-                
                 #check if token is in trusted peers file and assign the address to result 
                 result = ip_fetcher(data)
-                #print(f'peer:{result[0]} {result[1]} connected\n')
-                
+                #print(f'peer:{result[0]} {result[1]} connected\n') 
                 #if not reset msg command
                 if (result == False):
                     print("Enter peer number:")
@@ -190,7 +192,8 @@ def listen():
                 #update the peer port 
                 global p_port
                 p_port.enqueue(int(data))               
-                print(f"new peer address received {int(data)}") #debug                                                                 
+                print(f"new peer address received {int(data)}") #debug            
+            #transfer different file?                                                     
             elif (int(data) == 9999):
                 raw_adrs = sock.recv(1024).decode('utf-8')
                 array_adrs = raw_adrs.split(",")
@@ -322,16 +325,18 @@ def send_file( udp_d_port):
                             
             break
         
+#it needs to generate the public database.then it needs to send it from a different filepath. could be an issue like file_server not tested
 #use one function ofr this and send file later, too tired to change now xxxx
 def transfer_file(ip, port ):
     #open tcp client and sends file to peer tcp peer 
+            #database_public_creator(filepath,public_filepath)#reads in filepath outputs in public_filepath
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             p_tcp_addr = (ip,port)
             print(p_tcp_addr)#debug
             
             s.connect((p_tcp_addr))
 
-            with open(filepath, "rb") as f:                               
+            with open(filepath, "rb") as f:   #change from filepath to public_filepath                   
                 while True:
                     bytes_read = f.read(BUFFER_SIZE)
                     if not bytes_read:
@@ -350,7 +355,6 @@ def print_Dbase():
 
 #function to handle user inputted peer number and return address if peer recognised    
 def peer_to_ip_and_port(number):
-    
     check = number_check(number)
     if (check ==False):
         return False
