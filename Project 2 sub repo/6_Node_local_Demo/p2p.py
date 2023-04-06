@@ -410,18 +410,13 @@ def db_merge():
                 print("lockC already locked")
             else:
                 print("lockC available")
-            lockc.acquire()
-            print("lockC  locked")
-            file_comparer(filepath,filepath2,filepath)
-            lockc.release()
-            print("lockC unlocked")
-            #global database_merge
-            database_merge = 0 
-        if(publicdB==1):
-            print("public database has been made")
-            print("debug")
-            database_public_creator(filepath,public_filepath)
-            publicdB =0
+                lockc.acquire()
+                print("lockC  locked")
+                file_comparer(filepath,filepath2,filepath)
+                lockc.release()
+                print("lockC unlocked")
+                #global database_merge
+                database_merge = 0 
         else:
            pass
 

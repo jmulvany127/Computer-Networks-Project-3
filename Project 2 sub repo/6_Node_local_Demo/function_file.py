@@ -216,16 +216,19 @@ def get_peer_location(file_path, line_number):
 def database_public_creator(in_filepath, out_filepath):#input filepath is going to be database while output filepath is going to be public database.
     with open(in_filepath, 'r') as input:
         # Read the first line to get the field names
-        field_names = input.readline().strip().split(',')        
+        x = input.readline().strip().split(',')        
         # Create the output file and write the header and field names
+        input.close
         with open(out_filepath, 'w') as out:
             print("People:",file=out)
-            print("Name, Apperance, Last Seen, Status",file=out)
+            #print("Name, Apperance, Last Seen, Status",file=out)
             # Write the data lines
             for line in input:
-                fields = line.strip().split(',')
-                out.write(','.join(fields[:-1]) + '\n')
-        print("public database created")
+                x = line.strip().split(',')
+                out.write(','.join(x[:-1]) + '\n')
+            out.close
+
+    print("public database created")
 
 def database_read(filepath):
     # Check if file exists
