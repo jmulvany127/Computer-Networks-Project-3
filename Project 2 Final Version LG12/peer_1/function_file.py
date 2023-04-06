@@ -121,12 +121,12 @@ def get_peer_location(file_path, line_number):
 #filepath and filepath 2 are inputs , filepath3 is the output file, filepath3 could theoretically be filepath,
 def file_comparer(filepath,filepath2,filepath3):
     content = database_read(filepath) 
-    print (content)
+    #print (content)
     #time.sleep(10)
     c = database_read(filepath2)
-    print(c)
+    #print(c)
     merged_array= merge_arrays_no_dupes(content,c)
-    print (merged_array)
+    #print (merged_array)
     write_array_to_file(filepath3,merged_array)
 
 

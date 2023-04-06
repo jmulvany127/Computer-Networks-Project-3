@@ -85,14 +85,14 @@ def file_server():
             break
         f = open(filepath2, "wb")
         f.write(bytes_read)
-        print(bytes_read)
+        #print(bytes_read)
         f.close()
     print ("Database received")
     client_socket.close()
     file_server.close()
     global database_merge 
     database_merge =1
-    print("database_merge=",database_merge)
+    #print("database_merge=",database_merge)
 
 
 #function opened in new thread
@@ -270,7 +270,7 @@ def db_merge():
     #print("database_merge =0 ")
     while True:
         if (database_merge == 1):
-            print("database_merge =1")
+            #print("database_merge =1")
             file_comparer(filepath,filepath2,filepath)
             #global database_merge
             database_merge = 0 
@@ -304,9 +304,9 @@ def main():
         print("Commands: 'cnct' -connect to peers to peer, 'view' view the current database,'view public' to view the public database ,'add' to add to the database")
         cmd = input('Enter command: \n')
         if(cmd == 'view'):
-            print("database_merge=",database_merge)
+            #print("database_merge=",database_merge)
             #file_comparer(filepath,filepath2,filepath)
-            time.sleep(.1)
+            #time.sleep(.1)
             print_Dbase(filepath)
         elif(cmd == "view public"):
             print_Dbase(filepath4)
