@@ -26,3 +26,15 @@ e , h , v , c , -1023208864670803425
 Rory , dark hair green eyes , 11/2 , missing
 Ronan , dark hair wears glasses brown eyes, 1/3, missing
 Kieran , dark hair brown eyes , 18/1 , missing
+e , e , e , e , 2017594105573013353
+i , i , i , i , 228392821919788698
+e , e , e , e , 1306562517630728762
+e , a , w , q , 2253267790864597196
+e , q , q , q , 877684722578673692
+q , q , q , q , 850856264600327625
+e , e , e , q , -335676083098280952
+e , a , s , d , -2047286558894538570
+e , q , r , t , -800063037324430248
+e , q , o , p , -1543817761336991490
+v , c , b , n , -500997827182018567
+n , v , g , m , -644272379113394614

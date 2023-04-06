@@ -400,7 +400,9 @@ def db_merge():
     while True:
         if (database_merge == 1):
             print("database_merge has been merged")
+
             file_comparer(filepath,filepath2,filepath)
+            
             #global database_merge
             database_merge = 0 
         else:

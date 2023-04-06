@@ -270,7 +270,9 @@ def send_message( udp_d_port):
         
 #function to send files to peer        
 def send_file( udp_d_port):
-    
+    #global publicdB
+    #publicdB = 1
+    database_public_creator(filepath,public_filepath)
     global udp_s_port
     #opens the udp sending socket 
     send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -286,7 +288,7 @@ def send_file( udp_d_port):
     #make the destination adress
     d_adr = (str(d_ip1),udp_d_port)
     #print(d_adr)Debug
-    
+    #database_public_creator(filepath,public_filepath)
     #send our token to peer so they can verify we are trusted
     send_sock.sendto(str(my_token).encode(), d_adr)
     
@@ -330,6 +332,9 @@ def send_file( udp_d_port):
 def transfer_file(ip, port ):
     #open tcp client and sends file to peer tcp peer 
             #database_public_creator(filepath,public_filepath)#reads in filepath outputs in public_filepath
+            #global publicdB
+            #publicdB = 1
+            time.sleep(0.5)
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             p_tcp_addr = (ip,port)
             print(p_tcp_addr)#debug
@@ -343,7 +348,6 @@ def transfer_file(ip, port ):
                         break
                     s.sendall(bytes_read)
                     print ("Database sent")
-
                 s.close()
                 
 #function to print the current data base        
@@ -406,7 +410,6 @@ def db_merge():
                 print("lockC already locked")
             else:
                 print("lockC available")
-            
             lockc.acquire()
             print("lockC  locked")
             file_comparer(filepath,filepath2,filepath)
@@ -414,6 +417,11 @@ def db_merge():
             print("lockC unlocked")
             #global database_merge
             database_merge = 0 
+        if(publicdB==1):
+            print("public database has been made")
+            print("debug")
+            database_public_creator(filepath,public_filepath)
+            publicdB =0
         else:
            pass
 
@@ -424,6 +432,9 @@ def main():
     #starts the listener thread
     global database_merge
     database_merge = 0
+    global publicdB
+    publicdB = 0 
+
     listener = threading.Thread(target=listen, daemon=True)
     listener.start()
     booleonnn = threading.Thread(target=db_merge, daemon=True)
