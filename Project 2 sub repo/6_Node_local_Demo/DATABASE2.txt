@@ -1,21 +1,27 @@
 People:
 Name, Apperance, Last Seen, Status
-Colm	, dark hair blue eyes, 27/2 , missing
-Tom , fair hair green eyes , 24/1 , missing
-Cian , red hair wears glasses brown eyes, 22/2 , missing
-Ronan , dark hair wears glasses brown eyes, 1/3, missing
-Jake , fair hair blue eyes , 17/2 , missing
-Rory , dark hair green eyes , 11/2 , missing
-Adam , fair hair dark eyes , 1/3 , missing
-Sean , dark hair gray eyes , 21/2 , missing
-Kane , red hair wears glasses blue eyes, 15/2 , missing
-Kieran , dark hair brown eyes , 18/1 , missing
-Saran , blonde hair green eyes , 9/2 , missing
-joe , tall , 03/03/23 , missing
-colm , curly hair , 00000 , missing
-mic , short, blonde, blue eyes, horns , 04/04/2022 , missing
 bbb , bbb , bbb , bbb
-h , e , l , p , -1633356980154141349
+joe , tall , 03/03/23 , missing
+mic , short, blonde, blue eyes, horns , 04/04/2022 , missing
+e , o , p , a , 1151540334675312116
 ee , aa , ss , yy , -1698044145860032112
-w , o , w , w , -1241317312031139807
+e , h , v , c , -1023208864670803425
+111111111111111111111111111 , blonde eeee greeeeeeeeeeeeen eyes , 9/2 , missing
+Tom , fair hair green eyes , 24/1 , missing
+Saran , blonde hair green eyes , 9/2 , missing
+Rory , dark hair green eyes , 11/2 , missing
+colm , curly hair , 00000 , missing
+e , h , a , c , 1432673314393760023
+Kane , red hair wears glasses blue eyes, 15/2 , missing
+Adam , fair hair dark eyes , 1/3 , missing
+e , d , b ,  , 0
 e , q , f , t , 214707213215903044
+Jake , fair hair blue eyes , 17/2 , missing
+h , e , l , p , -1633356980154141349
+e , e , aaaaaa , gggggg , 1292570077693003303
+w , o , w , w , -1241317312031139807
+Colm	, dark hair blue eyes, 27/2 , missing
+Sean , dark hair gray eyes , 21/2 , missing
+Cian , red hair wears glasses brown eyes, 22/2 , missing
+Kieran , dark hair brown eyes , 18/1 , missing
+Ronan , dark hair wears glasses brown eyes, 1/3, missing

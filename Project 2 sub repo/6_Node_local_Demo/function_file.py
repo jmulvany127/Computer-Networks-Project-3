@@ -227,8 +227,56 @@ def database_public_creator(in_filepath, out_filepath):#input filepath is going 
                 out.write(','.join(fields[:-1]) + '\n')
         print("public database created")
 
+def database_read(filepath):
+    # Check if file exists
+    if not os.path.isfile(filepath):
+        print("Error: file does not exist")
+        return ["e"]
+    #print("before open")
+    # Open file and read contents
+    with open(filepath, "r") as f:
+        contents = f.readlines()
+    # Remove newline characters from end of each line
+    contents = [line.strip() for line in contents]
+    # Return contents as list
+    f.close
+    return contents          
 
+#merges arrays from second element used to print in file_comparer
+def merge_arrays_no_dupes(array1, array2):
+    # Combine arrays starting from the second element
+    array3 = array1[2:] + array2[2:]
+    # Remove duplicates and add the first element from each array
+    array3 = [array1[0]] +[array1[1]] + list(set(array3))
+    return array3
 
+def write_array_to_file(filepath, array):
+    with open(filepath, 'w') as f:
+        for item in array:
+            f.write("%s\n" % item)
+            
+##counts lines of a particular file
+def count_lines(filename):
+    with open(filename, 'r') as file:
+        return len(file.readlines())
+    
+#returns name of peer ,last value in token.txt file
+def get_peer_location(file_path, line_number):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        line = lines[line_number - 1].strip()
+        values = line.split(',')
+        return values[-1].strip()
+
+def file_comparer(filepath,filepath2,filepath3):
+    content = database_read(filepath) 
+    #print (content)
+    #time.sleep(10)
+    c = database_read(filepath2)
+    #print(c)
+    merged_array= merge_arrays_no_dupes(content,c)
+    #print (merged_array)
+    write_array_to_file(filepath3,merged_array)
 """
 #function 1 example
 def main():

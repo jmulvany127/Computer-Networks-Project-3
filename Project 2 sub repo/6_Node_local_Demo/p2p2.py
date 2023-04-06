@@ -57,16 +57,21 @@ def msg_server():
     msg_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     msg_server.bind(tcp_s_adr)
     msg_server.listen(10)
-    
+    ms_p_num = current_p_num
     print(f"[*] Listening as message server {tcp_s_adr}")
     client_socket, address = msg_server.accept()
-    print(f"[+] peer {current_p_num} is connected.")
+    location=get_peer_location(tokenfile,ms_p_num)
+    print(f"[+]{location} is connected.")
     
     recieved = 'blank'
     while (recieved != ''):
         recieved = client_socket.recv(1024)
         recieved = recieved.decode('utf-8')
-        print((recieved))
+        #print((recieved))
+        if recieved =='':
+            break
+        currentlocation=get_peer_location(tokenfile,ms_p_num)
+        print(f"From {currentlocation}:{recieved}")       
 
     msg_server.close()
     
@@ -94,14 +99,15 @@ def file_server():
         bytes_read = client_socket.recv(BUFFER_SIZE)
         if not bytes_read:
             break
-        f = open(filepath, "wb")
+        f = open(filepath2, "wb")
         f.write(bytes_read)
     print (f"Database received from peer {current_p_num}")
     #    progress.update(len(bytes_read))
     lock.release()
     client_socket.close()
     file_server.close()
-    
+    global database_merge 
+    database_merge =1
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
@@ -116,10 +122,7 @@ def listen():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((l_ip, udp_l_port))
     #print ('listening',({l_ip},{udp_l_port}))
-    
-    
     while True:
-        
         #blocking call reads in and decodes data 
         rcvd_data = sock.recv(1024).decode('utf-8')
         print (f"received data {rcvd_data}") #debug
@@ -135,11 +138,9 @@ def listen():
             
             #if data is in right range to be a token
             if ((int(data) >= lower and int(data) <= upper) ):
-                
                 #check if token is in trusted peers file and assign the address to result 
                 result = ip_fetcher(data)
-                #print(f'peer:{result[0]} {result[1]} connected\n')
-                
+                #print(f'peer:{result[0]} {result[1]} connected\n') 
                 #if not reset msg command
                 if (result == False):
                     print("Enter peer number:")
@@ -190,7 +191,8 @@ def listen():
                 #update the peer port 
                 global p_port
                 p_port.enqueue(int(data))               
-                print(f"new peer address received {int(data)}") #debug                                                                 
+                print(f"new peer address received {int(data)}") #debug            
+            #transfer different file?                                                     
             elif (int(data) == 9999):
                 raw_adrs = sock.recv(1024).decode('utf-8')
                 array_adrs = raw_adrs.split(",")
@@ -322,16 +324,18 @@ def send_file( udp_d_port):
                             
             break
         
+#it needs to generate the public database.then it needs to send it from a different filepath. could be an issue like file_server not tested
 #use one function ofr this and send file later, too tired to change now xxxx
 def transfer_file(ip, port ):
     #open tcp client and sends file to peer tcp peer 
+            #database_public_creator(filepath,public_filepath)#reads in filepath outputs in public_filepath
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             p_tcp_addr = (ip,port)
             print(p_tcp_addr)#debug
             
             s.connect((p_tcp_addr))
 
-            with open(filepath, "rb") as f:                               
+            with open(filepath, "rb") as f:   #change from filepath to public_filepath                   
                 while True:
                     bytes_read = f.read(BUFFER_SIZE)
                     if not bytes_read:
@@ -350,7 +354,6 @@ def print_Dbase():
 
 #function to handle user inputted peer number and return address if peer recognised    
 def peer_to_ip_and_port(number):
-    
     check = number_check(number)
     if (check ==False):
         return False
@@ -388,12 +391,32 @@ def alarm_broadcast():
             filer.start()
     
 
+
+filepath2 = "temp2.txt"    
+def db_merge():
+    global database_merge
+    #time.sleep(0.8)
+    print("database_merge",database_merge)
+    while True:
+        if (database_merge == 1):
+            print("database_merge has been merged")
+            file_comparer(filepath,filepath2,filepath)
+            #global database_merge
+            database_merge = 0 
+        else:
+           pass
+
+
+
+
 def main():
-    
     #starts the listener thread
+    global database_merge
+    database_merge = 0
     listener = threading.Thread(target=listen, daemon=True)
     listener.start()
-    
+    booleonnn = threading.Thread(target=db_merge, daemon=True)
+    booleonnn.start()
     #gets token number of this device frm file and update gloabl variable
     global my_token
     my_token = get_my_token(my_p_num)
@@ -409,7 +432,8 @@ def main():
         if(cmd == 'view'):
             print_Dbase()
         elif(cmd == "add"):
-            if (database_insert(filepath) != True):
+            #database_wrapper(filepath)
+            if (database_wrapper(filepath) != True):
                 file_broadcast_update()
         elif (cmd == 'brdcst'):
             file_broadcast_update()

@@ -48,6 +48,7 @@ bfr = Queue() #buffer for listening server data
 alarm_state = True #for different messager functionality
 
 lock = threading.Lock() #mutexe locking 
+lockc = threading.Lock()
             
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
@@ -99,14 +100,15 @@ def file_server():
         bytes_read = client_socket.recv(BUFFER_SIZE)
         if not bytes_read:
             break
-        f = open(filepath, "wb")
+        f = open(filepath2, "wb")
         f.write(bytes_read)
     print (f"Database received from peer {current_p_num}")
     #    progress.update(len(bytes_read))
     lock.release()
     client_socket.close()
     file_server.close()
-    
+    global database_merge 
+    database_merge =1
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
@@ -390,11 +392,42 @@ def alarm_broadcast():
             filer.start()
     
 
+
+filepath2 = "temp.txt"    
+def db_merge():
+    global database_merge
+    #time.sleep(0.8)
+    #print("database_merge",database_merge)
+    while True:
+        #print("database_merge",database_merge)
+        if (database_merge == 1):
+            print("database_merge has been merged")
+            if lockc.locked():
+                print("lockC already locked")
+            else:
+                print("lockC available")
+            
+            lockc.acquire()
+            print("lockC  locked")
+            file_comparer(filepath,filepath2,filepath)
+            lockc.release()
+            print("lockC unlocked")
+            #global database_merge
+            database_merge = 0 
+        else:
+           pass
+
+
+
+
 def main():
     #starts the listener thread
+    global database_merge
+    database_merge = 0
     listener = threading.Thread(target=listen, daemon=True)
     listener.start()
-    
+    booleonnn = threading.Thread(target=db_merge, daemon=True)
+    booleonnn.start()
     #gets token number of this device frm file and update gloabl variable
     global my_token
     my_token = get_my_token(my_p_num)
