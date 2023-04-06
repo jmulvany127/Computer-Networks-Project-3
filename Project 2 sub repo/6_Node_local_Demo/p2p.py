@@ -121,8 +121,6 @@ def listen():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((l_ip, udp_l_port))
     #print ('listening',({l_ip},{udp_l_port}))
-    
-    
     while True:
         #blocking call reads in and decodes data 
         rcvd_data = sock.recv(1024).decode('utf-8')
@@ -393,7 +391,6 @@ def alarm_broadcast():
     
 
 def main():
-    
     #starts the listener thread
     listener = threading.Thread(target=listen, daemon=True)
     listener.start()
@@ -413,7 +410,8 @@ def main():
         if(cmd == 'view'):
             print_Dbase()
         elif(cmd == "add"):
-            if (database_insert(filepath) != True):
+            #database_wrapper(filepath)
+            if (database_wrapper(filepath) != True):
                 file_broadcast_update()
         elif (cmd == 'brdcst'):
             file_broadcast_update()

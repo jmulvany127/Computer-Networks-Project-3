@@ -12,40 +12,50 @@ def get_random_number(x, y):
     return num
 
 
-def database_insert(filepath):
+def database_insert(filepath,name,apperance,seen_last,status):
     #if token doesnt exist write here rn
         if os.path.isfile(filepath) != True:
             with open(filepath,"w") as f:
                 print("People:",file=f)
-                print("Name, Apperance, Last Seen, Status",file=f)
+                print("Name, Apperance, Last Seen, Status, Id",file=f)
                 f.close
-                return
-        else: 
-            f=open(filepath,"r")
-            lines= f.readlines()
-            count = 0
-            for line in lines:
+ 
+        f=open(filepath,"r")
+        lines= f.readlines()
+        count = 0
+        for line in lines:
                 count +=1
+        print()
+        f.close
+        with open (filepath,"r+") as f:
+            for x in range(count):
+                print(lines[x].strip(),file=f)
+            id =r_number_generator(name,apperance,seen_last,status)
+            #print(id)  
+            print(name,",",apperance,",",seen_last,",",status,",",id ,file=f)
+            print()
             f.close
-            with open (filepath,"r+") as f:
-                first =input ("do you wish to add to database (y/n):")
-                if (first == "y"):
-                     name =input("type in the persons name,If this is unkown, leave this section blank:")
-                     apperance= input("type in the persons Apperance,If this is unkown, leave this section blank:")
-                     seen_last =input("type in the persons last seen,If this is unkown, leave this section blank:")
-                     status = input("type in the persons status,If this is unkown, leave this section blank:")
-                #added else might break function
-                else:
-                    return True
-                for x in range(count):
-                    print(lines[x].strip(),file=f)
-                print(name,",",apperance,",",seen_last,",",status,file=f)
-                print()
-                f.close
-                print("Database was written to")
+            #print("Database was written to")
                 #print(token)
-                return
+            return
             
+def r_number_generator(name,apperance,last_seen,status):
+    x=hash(name)
+    y=hash(apperance)
+    z=hash(last_seen)
+    a=hash(status)
+    random_number =hash(x*y*z*a)
+    return random_number
+
+def database_wrapper(database):
+            first =input ("do you wish to add to database (y/n):")
+            if (first == "y"):
+                     name =input("type in the persons name,If this is unknown, leave this section blank:")
+                     apperance= input("type in the persons Apperance,If this is unknown, leave this section blank:")
+                     seen_last =input("type in the persons last seen,If this is unknown, leave this section blank:")
+                     status = input("type in the persons status,If this is unknown, leave this section blank:")
+                     #db_insert(filepath4,name,apperance,seen_last,status)
+                     database_insert(database,name,apperance,seen_last,status)
 
 
 ##find peer location on list,read token find line that machine token is on, return line value
@@ -62,9 +72,6 @@ def find_p_number_on_token(my_token):
                 content=f.readline()
                 contentsplit = content.split(",")
                 tkn = int(contentsplit[2])
-                #print (f"token {token}")
-                #print(f"tkn {tkn}")
-                #print(int(token))
                 if int(my_token) == tkn :
                     print("Token is in database")
                     f.close
