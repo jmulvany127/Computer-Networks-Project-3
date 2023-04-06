@@ -79,13 +79,15 @@ def database_read(filepath):
     # Check if file exists
     if not os.path.isfile(filepath):
         print("Error: file does not exist")
-        return []
+        return ["e"]
+    #print("before open")
     # Open file and read contents
     with open(filepath, "r") as f:
         contents = f.readlines()
     # Remove newline characters from end of each line
     contents = [line.strip() for line in contents]
     # Return contents as list
+    f.close
     return contents          
 
 #merges arrays from second element used to print in file_comparer
@@ -100,6 +102,7 @@ def write_array_to_file(filepath, array):
     with open(filepath, 'w') as f:
         for item in array:
             f.write("%s\n" % item)
+            
 ##counts lines of a particular file
 def count_lines(filename):
     with open(filename, 'r') as file:
@@ -113,12 +116,17 @@ def get_peer_location(file_path, line_number):
         values = line.split(',')
         return values[-1].strip()
     
+    
 #combines .txt files together
 #filepath and filepath 2 are inputs , filepath3 is the output file, filepath3 could theoretically be filepath,
 def file_comparer(filepath,filepath2,filepath3):
     content = database_read(filepath) 
-    content2 = database_read(filepath2)
-    merged_array= merge_arrays_no_dupes(content,content2)
+    print (content)
+    #time.sleep(10)
+    c = database_read(filepath2)
+    print(c)
+    merged_array= merge_arrays_no_dupes(content,c)
+    print (merged_array)
     write_array_to_file(filepath3,merged_array)
 
 

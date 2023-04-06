@@ -16,8 +16,8 @@ port = []
 upper = 99999999999999
 lower = 100000
 #file location and size
-filepath = "DATABASE.txt"
 filepath2 = "DATABASE2.txt"
+filepath = "DATABASE.txt"
 filepath3 = "newDATABASE.txt"
 filepath4 = "PublicDatabase.txt"
 
@@ -26,16 +26,17 @@ current_p_num = 0  #peer number of peer in current connection
 my_token = 1       #gloabl variable declaration, will be replaced in functions
 
 #number of connections
+
 connections = 0
 
 #ip and port numbers
-l_ip = '10.6.5.240'   #local ip- insert device ip here 
+l_ip = '127.0.0.1'   #local ip- insert device ip here 
 
 udp_l_port = (33000 + int(my_p_num))     #listening port
 udp_s_port = (33100 +  int(my_p_num))     #source port for sender
 
 tcp_s_port = (33150 + 10*int(my_p_num) )  #tcp local server address
-tcp_s_adr = ('10.6.5.240', tcp_s_port) #tcp local server address
+tcp_s_adr = ('127.0.0.1', tcp_s_port) #tcp local server address
 
 rsp_d_ip = '127.0.0.1' #ip address of most recent peer, will be edited by functions 
 p_port = 33000 #base port for new peers, will be edited by functions
@@ -82,15 +83,16 @@ def file_server():
         bytes_read = client_socket.recv(BUFFER_SIZE)
         if not bytes_read:
             break
-        f = open(filepath, "wb")
+        f = open(filepath2, "wb")
         f.write(bytes_read)
+        print(bytes_read)
+        f.close()
     print ("Database received")
     client_socket.close()
     file_server.close()
-    
-    #decrements the connections when socket closed
-    global connections 
-    connections = connections - 1
+    global database_merge 
+    database_merge =1
+    print("database_merge=",database_merge)
 
 
 #function opened in new thread
@@ -152,7 +154,7 @@ def listen():\
                 #print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
             
         #numbers in this range are receved tcp port numbers
-        elif (int(data) >= 50000 and int(data) <=60000):
+        elif (int(data) >= 30000 and int(data) <=60000):
             #update the peer port 
             global p_port
             p_port = int(data)
@@ -214,10 +216,8 @@ def send_file( udp_d_port):
      send_sock.sendto(marker.encode(), (d_adr))
      send_sock.close()
      #opens the udp sending socket 
-     
      global p_port 
-     global rcved
-     
+     global rcved     
      time.sleep(0.2)
      #waits for peer to send back the tcp port number, received will be true here
      #print(f"waiting for the peer socket address")
@@ -236,7 +236,7 @@ def send_file( udp_d_port):
                     print ("Database sent")
                   #  progress.update(len(bytes_read))
             s.close()
-            file_comparer(filepath,filepath2,filepath)
+            #file_comparer(filepath,filepath2,filepath)
             rcved = False
             p_port = 50000
             break
@@ -264,10 +264,38 @@ def peer_to_ip_and_port(number):
     return True 
 
 
+def db_merge():
+    global database_merge
+    #time.sleep(0.8)
+    #print("database_merge =0 ")
+    while True:
+        if (database_merge == 1):
+            print("database_merge =1")
+            file_comparer(filepath,filepath2,filepath)
+            #global database_merge
+            database_merge = 0 
+        else:
+           pass
+
+
+
+
+
+
+
+
+
+
+
 def main():
+    global database_merge
+    database_merge = 0
     #starts the listener thread, which should always be listening.
     listener = threading.Thread(target=listen, daemon=True)
     listener.start()
+    booleonnn = threading.Thread(target=db_merge, daemon=True)
+    booleonnn.start()
+
     #gets token number of this device frm file and update gloabl variable
     global my_token
     my_token = get_my_token(my_p_num)
@@ -275,8 +303,10 @@ def main():
     while True:  
         print("Commands: 'cnct' -connect to peers to peer, 'view' view the current database,'view public' to view the public database ,'add' to add to the database")
         cmd = input('Enter command: \n')
-
         if(cmd == 'view'):
+            print("database_merge=",database_merge)
+            #file_comparer(filepath,filepath2,filepath)
+            time.sleep(.1)
             print_Dbase(filepath)
         elif(cmd == "view public"):
             print_Dbase(filepath4)
