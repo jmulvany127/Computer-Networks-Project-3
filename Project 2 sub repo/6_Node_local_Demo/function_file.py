@@ -1,6 +1,15 @@
 ##function file add database , add p2p a1 listen return false to all files
 ## function that requests a database update,get tokens
 import os.path
+import time
+
+def get_random_number(x, y):
+    # Set the seed for the random number generator
+    seed = int(str(time.time()).replace('.', ''))
+    seed = int(str(seed)[-8:])
+    # Calculate the random number
+    num = (seed % (y - x + 1)) + x
+    return num
 
 
 def database_insert(filepath):

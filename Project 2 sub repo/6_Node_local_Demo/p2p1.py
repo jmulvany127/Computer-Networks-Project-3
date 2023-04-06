@@ -191,8 +191,16 @@ def listen():
                 global p_port
                 p_port.enqueue(int(data))               
                 print(f"new peer address received {int(data)}") #debug                                                                 
-            else:
-                print ("data unrecognised, connection blocked\n")
+            elif (int(data) == 9999):
+                raw_adrs = sock.recv(1024).decode('utf-8')
+                array_adrs = raw_adrs.split(",")
+                t2_ip = array_adrs[0]
+                d_ip.enqueue(t2_ip)
+                t2_port = int(array_adrs[1])
+                t2_refresh = threading.Thread(target=transfer_file ,args=[t2_ip, t2_port], daemon=True)
+                t2_refresh.start()
+            else:       
+                 print ("data unrecognised, connection blocked\n")
         
 
 #function to send typed messages to peer
@@ -291,7 +299,7 @@ def send_file( udp_d_port):
     time.sleep(0.2)
     #waits for peer to send back the tcp port number, received will be true here
     print(f"waiting for the peer socket address")
- 
+    
     while (p_port.size() >0):
         while True:
             
@@ -301,12 +309,7 @@ def send_file( udp_d_port):
             print(p_tcp_addr)#debug
             
             s.connect((p_tcp_addr))
-            #msg = 'blank'
-            #while(msg != 'send' ):
-                #msg = input('Input send for file transfer \n ')
-                #wait for send comand to send file (for testing )
-                #if (msg == 'send' ):
-                    #reads file in byte wise and sends final packet to peer
+
             with open(filepath, "rb") as f:                               
                 while True:
                     bytes_read = f.read(BUFFER_SIZE)
@@ -318,7 +321,26 @@ def send_file( udp_d_port):
                 s.close()
                             
             break
+        
+#use one function ofr this and send file later, too tired to change now xxxx
+def transfer_file(ip, port ):
+    #open tcp client and sends file to peer tcp peer 
+            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+            p_tcp_addr = (ip,port)
+            print(p_tcp_addr)#debug
+            
+            s.connect((p_tcp_addr))
 
+            with open(filepath, "rb") as f:                               
+                while True:
+                    bytes_read = f.read(BUFFER_SIZE)
+                    if not bytes_read:
+                        break
+                    s.sendall(bytes_read)
+                    print ("Database sent")
+
+                s.close()
+                
 #function to print the current data base        
 def print_Dbase():
     with open(filepath, "r") as file:
@@ -412,8 +434,7 @@ def main():
                 send_message( udp_d_port)
             elif(cmd == 'file'):
                 send_file( udp_d_port)
-
-            
+                       
         
 if __name__ == "__main__":
     main() 
