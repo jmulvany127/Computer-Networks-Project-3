@@ -199,6 +199,26 @@ def splitting(numbers):
     numbercorrected = [x - 1 for x in number]
     return numbercorrected
 
+def get_peer_location(file_path, line_number):
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        line = lines[line_number - 1].strip()
+        values = line.split(',')
+        return values[-1].strip()
+
+def database_public_creator(in_filepath, out_filepath):#input filepath is going to be database while output filepath is going to be public database.
+    with open(in_filepath, 'r') as input:
+        # Read the first line to get the field names
+        field_names = input.readline().strip().split(',')        
+        # Create the output file and write the header and field names
+        with open(out_filepath, 'w') as out:
+            print("People:",file=out)
+            print("Name, Apperance, Last Seen, Status",file=out)
+            # Write the data lines
+            for line in input:
+                fields = line.strip().split(',')
+                out.write(','.join(fields[:-1]) + '\n')
+        print("public database created")
 
 
 
