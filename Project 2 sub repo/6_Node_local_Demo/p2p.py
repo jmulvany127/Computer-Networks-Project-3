@@ -327,7 +327,7 @@ def transfer_file(ip, port ):
     #open tcp client and sends file to peer tcp peer 
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             p_tcp_addr = (ip,port)
-            print(p_tcp_addr)#debug
+            #print(p_tcp_addr)#debug
             
             s.connect((p_tcp_addr))
 
@@ -337,7 +337,7 @@ def transfer_file(ip, port ):
                     if not bytes_read:
                         break
                     s.sendall(bytes_read)
-                    print ("Database sent")
+                    #print ("Database sent")
 
                 s.close()
                 

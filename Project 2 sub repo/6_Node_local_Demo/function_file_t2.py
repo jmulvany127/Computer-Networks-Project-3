@@ -18,7 +18,7 @@ def get_random_number(x, y):
 #function checks to see if the input is a postive,whole number and that number has an associated address attached to it.
 def number_check(number):
     try:
-        f=open("token.txt","r")
+        f=open("t1nodes.txt","r")
         lines= f.readlines()
         count = 0
         for line in lines:
@@ -38,11 +38,11 @@ def number_check(number):
         return False
 
 
-#fuction checks token.txt and will go to line inputted and store the ip and port number from that line in storage
+#fuction checks t1nodes.txt.txt and will go to line inputted and store the ip and port number from that line in storage
 def addres_arrays(numbercorrected):
     store=[]
     y=0
-    file =  open("token.txt")
+    file =  open("t1nodes.txt")
     for pos, l_num in enumerate(file):
         # check if the line number is specified in the lines to read array
         if pos in numbercorrected:

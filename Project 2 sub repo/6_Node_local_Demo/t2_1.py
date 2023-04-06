@@ -17,11 +17,11 @@ port = []
 
 
 #file location and size
-filepath = "t1nodes.txt"
+filepath = "T2DATABASE.txt"
 filesize = os.path.getsize(filepath)
 
 
-peers_in_t1 = 1
+peers_in_t1 =3
 max_attempts = 5
 rfrsh_code = 9999
 
@@ -52,9 +52,9 @@ def file_server():
         
         file_server.listen(10)
         
-        print(f"[*] Listening as file server {tcp_s_adr}")
+       # print(f"[*] Listening as file server {tcp_s_adr}")
         client_socket, address = file_server.accept()
-        print(f"[+] T1 is connected.") ###REMOVE THIS
+       # print(f"[+] T1 is connected.") ###REMOVE THIS
         
 
         
@@ -65,7 +65,7 @@ def file_server():
                 break
             f = open(filepath, "wb")
             f.write(bytes_read)
-        print (f"Database received from peer T1")
+        #print (f"Database received from peer T1")
         file_rcvd = True 
         client_socket.close()
         
@@ -130,7 +130,26 @@ def peer_to_ip_and_port(number):
     return True 
     #shouldnt need to anything else as ip+port should be in the global array but declared in there respective functions idk at this point
 
-    
+def get_file():
+    global file_rcvd
+    attempts = 0
+    while(file_rcvd == False ):
+        attempts = attempts + 1
+        if(attempts == max_attempts):
+            print("No tier 1 devices online, database refresh unavailable.")
+            file_rcvd = True
+            break
+        
+        
+        random_num = get_random_number(1, peers_in_t1)
+        random_num = str(random_num)
+        #print(random_num)
+        peer_to_ip_and_port(random_num)
+        t1_port = int(port[0])
+        
+        send_my_adrs(t1_port)
+       # print ("adress sent")
+        time.sleep(2)   
 
 def main():
     global file_rcvd
@@ -146,22 +165,10 @@ def main():
             print_Dbase()
        
         elif (cmd == 'rfrsh'):
-            attempts = 0
-            while(file_rcvd == False ):
-                attempts = attempts + 1
-                if(attempts == max_attempts):
-                    print("No tier 1 devices online, database refresh unavailable.")
-                    file_rcvd = True
-                    break
-                
-                
-                random_num = get_random_number(1, peers_in_t1)
-                random_num = str(random_num)
-                peer_to_ip_and_port(random_num)
-                t1_port = int(port[0])
-                
-                send_my_adrs(t1_port)
-                time.sleep(2)
+            get_file()
+            file_rcvd = False
+            get_file()
+
             
             
      

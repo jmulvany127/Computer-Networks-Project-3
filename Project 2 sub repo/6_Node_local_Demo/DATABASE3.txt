@@ -16,3 +16,6 @@ colm , curly hair , 00000 , missing
 mic , short, blonde, blue eyes, horns , 04/04/2022 , missing
 bbb , bbb , bbb , bbb
 j , j , j , j
+w , w , w , w
+u , u , u , u
+g , g , g , g
