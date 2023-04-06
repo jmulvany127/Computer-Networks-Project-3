@@ -15,8 +15,4 @@ joe , tall , 03/03/23 , missing
 colm , curly hair , 00000 , missing
 mic , short, blonde, blue eyes, horns , 04/04/2022 , missing
 bbb , bbb , bbb , bbb
-jjjj , jjjjj , jjjjjj , jjjjjjjj
-k , k , k , k
-hhj , hjk , hjjk , hhjkk
-m , m , m , m
-q , q , q , q
+j , j , j , j

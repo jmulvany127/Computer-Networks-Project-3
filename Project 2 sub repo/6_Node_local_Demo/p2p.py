@@ -159,7 +159,7 @@ def listen():
                     global tcp_s_adr
                     tcp_s_adr = (l_ip, tcp_s_port)
                     
-                #update the address of the peers udp listening server by parsing result
+                    #update the address of the peers udp listening server by parsing result
                     global rsp_d_ip
                     rsp_d_port = int(result[1])
                     rsp_d_ip = (result[0])
@@ -193,7 +193,6 @@ def listen():
                 print(f"new peer address received {int(data)}") #debug                                                                 
             elif (int(data) == 9999):
                 raw_adrs = sock.recv(1024).decode('utf-8')
-                print (raw_adrs)
                 array_adrs = raw_adrs.split(",")
                 t2_ip = array_adrs[0]
                 d_ip.enqueue(t2_ip)
