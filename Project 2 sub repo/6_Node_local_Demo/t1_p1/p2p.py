@@ -244,31 +244,29 @@ def send_message( udp_d_port):
             #waits for peer to send back the tcp port number, received will be true here
             print(f"waiting for the peer socket address")
             #will run aslong as there are destination ports in teh queue
-            time.sleep(0.2)
-            
-            while(True):
-                if (p_port.size() >0):               
-                    #open tcp client and send message to peer tcp peer 
-                    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                    p_tcp_addr = (str(d_ip1),p_port.dequeue())
-                    print(p_tcp_addr)#debug
+            while (p_port.size() >0):
+                                   
+                #open tcp client and send message to peer tcp peer 
+                s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                p_tcp_addr = (str(d_ip1),p_port.dequeue())
+                print(p_tcp_addr)#debug
+                
+                msg = 'alarm'
+                s.connect((p_tcp_addr))
+                if (alarm_state == True):
+                    msg = msg.encode('utf-8')
+                    s.send(msg)
                     
-                    msg = 'alarm'
-                    s.connect((p_tcp_addr))
-                    if (alarm_state == True):
-                        msg = msg.encode('utf-8')
-                        s.send(msg)
-                        
-                    else:
-                        while(msg != 'quit' ):
-                            #accept user input for message
-                            if (msg != 'quit' ):
-                                msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
-                                s.send(msg)
-                                msg = msg.decode('utf-8')
-                    s.close() 
-                        
-                    break 
+                else:
+                    while(msg != 'quit' ):
+                        #accept user input for message
+                        if (msg != 'quit' ):
+                            msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
+                            s.send(msg)
+                            msg = msg.decode('utf-8')
+                s.close() 
+                    
+                break 
         
 #function to send files to peer        
 def send_file( udp_d_port):

@@ -19,11 +19,11 @@ port = []
 upper = 99999999999999
 lower = 100000
 #file location and size
-filepath = "DATABASE1.txt"
+filepath = "DATABASE4.txt"
 filesize = os.path.getsize(filepath)
 tokenfile = "token.txt"
 public_filepath = "public_Filepath.txt"
-my_p_num = '1'     #peer number of this device
+my_p_num = '4'     #peer number of this device
 current_p_num = 0  #peer number of peer in current connection 
 my_token = 1       #gloabl variable declaration, will be replaced in functions
 
@@ -66,6 +66,7 @@ def msg_server():
     
     recieved = 'blank'
     while (recieved != ''):
+        print("inisde received") ###debug
         recieved = client_socket.recv(1024)
         recieved = recieved.decode('utf-8')
         #print((recieved))
@@ -244,31 +245,30 @@ def send_message( udp_d_port):
             #waits for peer to send back the tcp port number, received will be true here
             print(f"waiting for the peer socket address")
             #will run aslong as there are destination ports in teh queue
-            time.sleep(0.2)
-            
-            while(True):
-                if (p_port.size() >0):               
-                    #open tcp client and send message to peer tcp peer 
-                    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                    p_tcp_addr = (str(d_ip1),p_port.dequeue())
-                    print(p_tcp_addr)#debug
+            while (p_port.size() >0):
+                                   
+                #open tcp client and send message to peer tcp peer 
+                s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                p_tcp_addr = (str(d_ip1),p_port.dequeue())
+                print(p_tcp_addr)#debug
+                
+                msg = 'alarm'
+                s.connect((p_tcp_addr))
+                if (alarm_state == True):
+                    msg = msg.encode('utf-8')
+                    s.send(msg)
                     
-                    msg = 'alarm'
-                    s.connect((p_tcp_addr))
-                    if (alarm_state == True):
-                        msg = msg.encode('utf-8')
-                        s.send(msg)
-                        
-                    else:
-                        while(msg != 'quit' ):
-                            #accept user input for message
-                            if (msg != 'quit' ):
-                                msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
-                                s.send(msg)
-                                msg = msg.decode('utf-8')
-                    s.close() 
-                        
-                    break 
+                else:
+                    while(msg != 'quit' ):
+                        #accept user input for message
+                        if (msg != 'quit' ):
+                            msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
+                            print(msg) ###debugggg
+                            s.send(msg)
+                            msg = msg.decode('utf-8')
+                s.close() 
+                    
+                break 
         
 #function to send files to peer        
 def send_file( udp_d_port):
