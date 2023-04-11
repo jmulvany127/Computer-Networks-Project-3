@@ -1,0 +1,8 @@
+10.35.70.1, 33001 , 149418626997 , Yangon General Hospital
+10.35.70.21, 33002 , 747323719281 , Mandalay General Hospital
+10.35.70.41, 33003 , 212414258008 , Cox's Bazar NW 1
+10.35.70.42, 33004 , 529190970613 , Cox's Bazar SE 2
+127.0.0.1, 33005 , 100719222642 , Thandwe General Hospital
+127.0.0.1, 33006 , 848089058805 , Nyaung Oo General Hospital
+127.0.0.1, 33007 , 229108561395 , Zabu Thiri Hospital
+127.0.0.1, 33008 , 882215535327 , Pun Hlaing Siloam Hospital

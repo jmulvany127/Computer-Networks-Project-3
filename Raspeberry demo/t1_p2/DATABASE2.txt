@@ -1,0 +1,22 @@
+People:
+jay , brown hair tall , 01/01/22 , missing , 23352366487613471
+Jack, black hair, 10/5/23, found, 98572638547629563
+Daniel, brown hair, 11/5/23, missing, 10739485629384576
+Rory, blonde hair, 7/5/23, found, 69027485392048093
+Ethan, brown hair, 14/5/23, found, 13784569384756398
+William, dark hair, 15/5/23, missing, 14729384756392834
+David, gray hair, 8/5/23, missing, 78263485720394857
+Adam, Red hair Red nose, 16/5/23, missing, 15729384756392834
+John, bald, 2/2/23, missing, 19028374658739034
+Cian, blonde hair, 3/3/23, missing, 29384756192846578
+Michael, brown hair, 4/5/23, missing, 38746928376452012
+Matthew, dark hair, 4/4/23, missing, 1600909831762
+Saran, red hair, 1/1/23, found, 28374659837645092
+Ronan, black hair, 6/5/23, missing, 58392048573948573
+Liam, red hair, 9/5/23, missing, 89263584756234872
+Sam, blonde hair, 12/5/23, missing, 11726384956372849
+Tom, fair hair, 27/1/23, missing, 1069146220324556353
+Katie, brown hair, 5/5/23, missing, 49283847920573927
+Colm, dark hair, 4/4/23, missing, 63635195000989714
+Aaron, fair hair, 13/5/23, missing, 12739485632845763
+
