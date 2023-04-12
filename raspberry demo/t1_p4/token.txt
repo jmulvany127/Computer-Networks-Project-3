@@ -6,4 +6,3 @@
 127.0.0.1, 33006 , 848089058805 , Nyaung Oo General Hospital
 127.0.0.1, 33007 , 229108561395 , Zabu Thiri Hospital
 127.0.0.1, 33008 , 882215535327 , Pun Hlaing Siloam Hospital
-

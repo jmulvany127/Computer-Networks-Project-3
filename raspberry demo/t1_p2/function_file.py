@@ -73,7 +73,7 @@ def find_p_number_on_token(my_token):
                 contentsplit = content.split(",")
                 tkn = int(contentsplit[2])
                 if int(my_token) == tkn :
-                    print("Token is in database")
+                   # print("Token is in database")
                     f.close
                     return i
 
@@ -99,7 +99,7 @@ def ip_fetcher(token):
                 #print(f"tkn {tkn}")
                 #print(int(token))
                 if int(token) == tkn :
-                    print("Token is in database")
+                   # print("Token is in database")
                     storage = [contentsplit[0],contentsplit[1],i]
                     f.close
                     #print (storage)

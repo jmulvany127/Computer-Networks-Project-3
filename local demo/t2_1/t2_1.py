@@ -18,7 +18,7 @@ port = []
 
 #file location and size
 filepath = "T2DATABASE.txt"
-filesize = os.path.getsize(filepath)
+
 
 
 peers_in_t1 =4
@@ -164,8 +164,8 @@ def main():
        
         elif (cmd == 'rfrsh'):
             get_file()
-            
-        
+            file_rcvd = False
+            get_file()
 
             
             

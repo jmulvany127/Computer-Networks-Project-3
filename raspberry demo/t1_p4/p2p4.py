@@ -194,8 +194,9 @@ def listen():
                 global p_port
                 p_port.enqueue(int(data))   
                 location = get_peer_location(tokenfile, int(current_p_num_out)) 
-                time.sleep(0.2)           
-                print(f"Socket Address received from {location}, press enter to continue: \n") #debug            
+                time.sleep(0.2)   
+                if (alarm_state == False):       
+                    print(f"Socket Address received from {location}, press enter to continue: \n") #debug            
             #transfer different file?                                                     
             elif (int(data) == 9999):
                 raw_adrs = sock.recv(1024).decode('utf-8')
@@ -245,30 +246,34 @@ def send_message( udp_d_port):
             #will run aslong as there are destination ports in teh queue
             cncl = '1'
             while(cncl != 'quit' ):
-                cncl = input('Waiting for the peer socket address, enter quit to cancel: \n ')
-                if (p_port.size() >0):               
-                    #open tcp client and send message to peer tcp peer 
-                    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                    p_tcp_addr = (str(d_ip1),p_port.dequeue())
-                    #print(p_tcp_addr)#debug
-                    
-                    msg = 'EMERGENCY BROADCAST - - SAFEZONE COMPROMISED'
-                    s.connect((p_tcp_addr))
-                    if (alarm_state == True):
-                        msg = msg.encode('utf-8')
-                        s.send(msg)
-                        
-                    else:
-                        while(msg != 'quit' ):
-                            #accept user input for message
-                            if (msg != 'quit' ):
-                                msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
+                if (alarm_state == False):
+                    cncl = input('Waiting for the peer socket address, enter quit to cancel: \n ')
+                if (p_port.size() >0): 
+                        if (p_port.size() >0):               
+                            #open tcp client and send message to peer tcp peer 
+                            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                            p_tcp_addr = (str(d_ip1),p_port.dequeue())
+                            #print(p_tcp_addr)#debug
+                            
+                            msg = 'EMERGENCY BROADCAST - - SAFEZONE COMPROMISED'
+                            s.connect((p_tcp_addr))
+                            if (alarm_state == True):
+                                msg = msg.encode('utf-8')
                                 s.send(msg)
-                                msg = msg.decode('utf-8')
-                    s.close() 
-                        
-                    break 
-                
+                                
+                            else:
+                                while(msg != 'quit' ):
+                                    #accept user input for message
+                                    if (msg != 'quit' ):
+                                        msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
+                                        s.send(msg)
+                                        msg = msg.decode('utf-8')
+                            s.close() 
+                                
+                            break 
+ 
+ 
+          
         
 #function to send files to peer        
 def send_file( udp_d_port):
@@ -308,12 +313,13 @@ def send_file( udp_d_port):
     
     cncl = '1'
     while(cncl != 'quit' ):
-        cncl = input('Waiting for the peer socket address, enter quit to cancel: \n ')
+        if (alarm_state == False):
+            cncl = input('Waiting for the peer socket address, enter quit to cancel: \n ')
         if (p_port.size() >0): 
             #open tcp client and sends file to peer tcp peer 
             s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
             p_tcp_addr = (str(d_ip1),p_port.dequeue())
-            print(p_tcp_addr)#debug
+            #print(p_tcp_addr)#debug
             
             s.connect((p_tcp_addr))
 
@@ -323,7 +329,8 @@ def send_file( udp_d_port):
                     if not bytes_read:
                         break
                     s.sendall(bytes_read)
-                    print ("Database sent")
+                    if (alarm_state == False):
+                        print ("Database sent")
 
                 s.close()
                             
@@ -375,14 +382,17 @@ def peer_to_ip_and_port(number):
     #shouldnt need to anything else as ip+port should be in the global array but declared in there respective functions idk at this point
 
 def file_broadcast_update():
+    global alarm_state
     total_peers = 3
     for x in range(total_peers):
         p = str(x +1)
         if(p != my_p_num):
+            alarm_state = True
             peer_to_ip_and_port(p)
             udp_d_port = int(port[0])
             filer = threading.Thread(target=send_file, daemon=True, args=[ udp_d_port])
             filer.start()
+    print("File update broadcast complete")
 
 def alarm_broadcast():
     global alarm_state
