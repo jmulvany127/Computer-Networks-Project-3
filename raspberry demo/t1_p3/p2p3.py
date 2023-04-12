@@ -44,7 +44,7 @@ rsp_d_ip = '127.0.0.1' #ip address of most recent peer, will be edited by functi
 
 d_ip = Queue() #queue which holds new peers ips
 p_port = Queue() #queue which holds new peer addresses 
-bfr = Queue() #buffer for listening servefr data 
+bfr = Queue() #buffer for listening server data 
 
 alarm_state = True #for different messager functionality
 
@@ -79,6 +79,7 @@ def msg_server():
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
+    return
 
 #function opened in new thread
 #function sets up a tcp server socket for receiving messages from peers
@@ -113,6 +114,7 @@ def file_server():
     #decrements the connections when socket closed
     global connections 
     connections = connections - 1
+    return
 
 #function opened in new thread
 #function sets up an always on udp server socket for receiving messages from peers  
@@ -123,11 +125,11 @@ def listen():
     #bind udp listening socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((l_ip, udp_l_port))
-    print ('listening',({l_ip},{udp_l_port}))
+    #print ('listening',({l_ip},{udp_l_port}))
     while True:
         #blocking call reads in and decodes data 
         rcvd_data = sock.recv(1024).decode('utf-8')
-        print (f"received data {rcvd_data}") #debug
+        #print (f"received data {rcvd_data}") #debug
         
         #add data to buffer queue
         bfr.enqueue(rcvd_data)
@@ -136,19 +138,19 @@ def listen():
         while(bfr.size()>0):
             
             data = bfr.dequeue()
-            print (f"buffered data {data}")
+            #print (f"buffered data {data}")
             
             #if data is in right range to be a token
             if ((int(data) >= lower and int(data) <= upper) ):
                 #check if token is in trusted peers file and assign the address to result 
                 result = ip_fetcher(data)
-                print(f'peer:{result[0]} {result[1]} connected\n') 
+                #print(f'peer:{result[0]} {result[1]} connected\n') 
                 #if not reset msg command
                 if (result == False):
                     print("Enter peer number:")
                     return
                 else:
-                    print(f'peer:{result[0]} {result[1]} connected\n')
+                    #print(f'peer:{result[0]} {result[1]} connected\n')
                     
                     #marker for file or text data
                     marker = sock.recv(1024).decode('utf-8')
@@ -186,7 +188,7 @@ def listen():
                     send_sock.bind((l_ip, udp_s_port))
                     send_sock.sendto((str(tcp_s_port)).encode(), (rspd_adrs))
                     send_sock.close()
-                    print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
+                    #print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
                 
             #numbers in this range are receved tcp port numbers
             elif (int(data) >= 30000 and int(data) <=60000):
@@ -212,65 +214,67 @@ def listen():
 
 #function to send typed messages to peer
 def send_message( udp_d_port):
-            global udp_s_port          
-            global alarm_state
-            #opens the udp sending socket 
-            send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            send_sock.bind((l_ip, udp_s_port))
-            
-            #increment the udp source port for parallel connections
-            udp_s_port = (udp_s_port + 1)
-            print(udp_d_port) #Debug
-            
-            #get the destination port from the queue
-            d_ip1 = d_ip.dequeue()
-            print(d_ip1) #Debug
-            #make the destination adress
-            d_adr = (str(d_ip1),udp_d_port)
-            print(d_adr )#Debug
-            print(my_token)
-            #send our token to peer so they can verify we are trusted
-            send_sock.sendto(str(my_token).encode(), d_adr)
-            
-            time.sleep(0.1)
-            
-            #send the marker t to the peer so they know they will be recieiving a message
-            marker = 't'
-            send_sock.sendto(marker.encode(), (str(d_ip1), udp_d_port))
-            send_sock.close()
-            
-            #decrement udp source port number
-            udp_s_port = (udp_s_port - 1)
-            
-            
-            #will run aslong as there are destination ports in teh queue
-            cncl = '1'
-            while(cncl != 'quit' ):
-                if (alarm_state == False):
-                    cncl = input('Waiting for the peer socket address, enter quit to cancel: \n ')
-                if (p_port.size() >0): 
-                        if (p_port.size() >0):               
-                            #open tcp client and send message to peer tcp peer 
-                            s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-                            p_tcp_addr = (str(d_ip1),p_port.dequeue())
-                            #print(p_tcp_addr)#debug
-                            
-                            msg = 'EMERGENCY BROADCAST - - SAFEZONE COMPROMISED'
-                            s.connect((p_tcp_addr))
-                            if (alarm_state == True):
-                                msg = msg.encode('utf-8')
+    global udp_s_port          
+    global alarm_state
+    #opens the udp sending socket 
+    send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    send_sock.bind((l_ip, udp_s_port))
+    
+    #increment the udp source port for parallel connections
+    udp_s_port = (udp_s_port + 1)
+    #print(udp_d_port) Debug
+    
+    #get the destination port from the queue
+    d_ip1 = d_ip.dequeue()
+    #print(d_ip1) Debug
+    #make the destination adress
+    d_adr = (str(d_ip1),udp_d_port)
+    #print(d_adr)Debug
+    
+    #send our token to peer so they can verify we are trusted
+    send_sock.sendto(str(my_token).encode(), d_adr)
+    
+    time.sleep(0.1)
+    
+    #send the marker t to the peer so they know they will be recieiving a message
+    marker = 't'
+    send_sock.sendto(marker.encode(), (str(d_ip1), udp_d_port))
+    send_sock.close()
+    
+    #decrement udp source port number
+    udp_s_port = (udp_s_port - 1)
+    
+    
+    #will run aslong as there are destination ports in teh queue
+    cncl = '1'
+    while(cncl != 'quit' ):
+        if (alarm_state == False):
+            cncl = input('Waiting for the peer socket address, enter quit to cancel: \n ')
+        if (p_port.size() >0): 
+                if (p_port.size() >0):               
+                    #open tcp client and send message to peer tcp peer 
+                    s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+                    p_tcp_addr = (str(d_ip1),p_port.dequeue())
+                    #print(p_tcp_addr)#debug
+                    
+                    msg = 'EMERGENCY BROADCAST - - SAFEZONE COMPROMISED'
+                    s.connect((p_tcp_addr))
+                    if (alarm_state == True):
+                        msg = msg.encode('utf-8')
+                        s.send(msg)
+                        
+                    else:
+                        while(msg != 'quit' ):
+                            #accept user input for message
+                            if (msg != 'quit' ):
+                                msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
                                 s.send(msg)
-                                
-                            else:
-                                while(msg != 'quit' ):
-                                    #accept user input for message
-                                    if (msg != 'quit' ):
-                                        msg = input('Input peer message, enter quit to exit messenger: \n ').encode('utf-8')
-                                        s.send(msg)
-                                        msg = msg.decode('utf-8')
-                            s.close() 
-                                
-                            break 
+                                msg = msg.decode('utf-8')
+                    s.close() 
+                        
+                    break 
+    return
+
  
  
           
@@ -335,7 +339,8 @@ def send_file( udp_d_port):
                 s.close()
                             
             break
-            
+    return         
+    
 #it needs to generate the public database.then it needs to send it from a different filepath. could be an issue like file_server not tested
 #use one function ofr this and send file later, too tired to change now xxxx
 def transfer_file(ip, port ):
@@ -357,6 +362,7 @@ def transfer_file(ip, port ):
                     s.sendall(bytes_read)
                     print ("Database sent to Tier 2 user")
                 s.close()
+            return
                 
 #function to print the current data base        
 def print_Dbase():
