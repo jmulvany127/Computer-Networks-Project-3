@@ -44,7 +44,7 @@ rsp_d_ip = '127.0.0.1' #ip address of most recent peer, will be edited by functi
 
 d_ip = Queue() #queue which holds new peers ips
 p_port = Queue() #queue which holds new peer addresses 
-bfr = Queue() #buffer for listening server data 
+bfr = Queue() #buffer for listening servefr data 
 
 alarm_state = True #for different messager functionality
 
@@ -123,11 +123,11 @@ def listen():
     #bind udp listening socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind((l_ip, udp_l_port))
-    #print ('listening',({l_ip},{udp_l_port}))
+    print ('listening',({l_ip},{udp_l_port}))
     while True:
         #blocking call reads in and decodes data 
         rcvd_data = sock.recv(1024).decode('utf-8')
-        #print (f"received data {rcvd_data}") #debug
+        print (f"received data {rcvd_data}") #debug
         
         #add data to buffer queue
         bfr.enqueue(rcvd_data)
@@ -136,19 +136,19 @@ def listen():
         while(bfr.size()>0):
             
             data = bfr.dequeue()
-            #print (f"buffered data {data}")
+            print (f"buffered data {data}")
             
             #if data is in right range to be a token
             if ((int(data) >= lower and int(data) <= upper) ):
                 #check if token is in trusted peers file and assign the address to result 
                 result = ip_fetcher(data)
-                #print(f'peer:{result[0]} {result[1]} connected\n') 
+                print(f'peer:{result[0]} {result[1]} connected\n') 
                 #if not reset msg command
                 if (result == False):
                     print("Enter peer number:")
                     return
                 else:
-                    #print(f'peer:{result[0]} {result[1]} connected\n')
+                    print(f'peer:{result[0]} {result[1]} connected\n')
                     
                     #marker for file or text data
                     marker = sock.recv(1024).decode('utf-8')
@@ -186,7 +186,7 @@ def listen():
                     send_sock.bind((l_ip, udp_s_port))
                     send_sock.sendto((str(tcp_s_port)).encode(), (rspd_adrs))
                     send_sock.close()
-                    #print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
+                    print(f"server address{tcp_s_adr}sent to udp port{udp_d_port}") #debug
                 
             #numbers in this range are receved tcp port numbers
             elif (int(data) >= 30000 and int(data) <=60000):
@@ -220,15 +220,15 @@ def send_message( udp_d_port):
             
             #increment the udp source port for parallel connections
             udp_s_port = (udp_s_port + 1)
-            #print(udp_d_port) Debug
+            print(udp_d_port) #Debug
             
             #get the destination port from the queue
             d_ip1 = d_ip.dequeue()
-            #print(d_ip1) Debug
+            print(d_ip1) #Debug
             #make the destination adress
             d_adr = (str(d_ip1),udp_d_port)
-            #print(d_adr)Debug
-            
+            print(d_adr )#Debug
+            print(my_token)
             #send our token to peer so they can verify we are trusted
             send_sock.sendto(str(my_token).encode(), d_adr)
             
