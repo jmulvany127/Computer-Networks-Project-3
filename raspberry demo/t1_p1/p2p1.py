@@ -32,7 +32,7 @@ current_p_num_out = 0
 connections = 0
 
 #ip and port numbers
-l_ip = '127.0.0.1'   #local ip- insert device ip here 
+l_ip = '10.35.70.1'   #local ip- insert device ip here 
 
 udp_l_port = (33000 + int(my_p_num))     #listening port
 udp_s_port = (33100 +  int(my_p_num)*10)     #source port for sender
