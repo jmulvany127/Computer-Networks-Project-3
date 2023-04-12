@@ -21,13 +21,13 @@ filepath = "T2DATABASE.txt"
 
 
 
-peers_in_t1 =4
-max_attempts = peers_in_t1*5
+peers_in_t1 =3
+max_attempts = peers_in_t1*3
 rfrsh_code = 9999
 
 
 #ip and port numbers
-l_ip = '127.0.0.1'   #local ip- insert device ip here 
+l_ip = '10.35.70.42'   #local ip- insert device ip here 
 
 udp_s_port = (33777)     #source port for sender
 
@@ -147,7 +147,7 @@ def get_file():
         
         send_my_adrs(t1_port)
         #print ("adress sent")
-        time.sleep(2)   
+        time.sleep(0.5)   
 
 def main():
     global file_rcvd
